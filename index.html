@@ -221,13 +221,13 @@
             }
 
             // Freigabe durch [Left Shift + Backspace]
-            if (event.shiftKey && event.key === 'Backspace' && event.location === 1) {
+            if (event.shiftKey && event.key === 'E' && event.location === 1) {
                 gameAllowed = true;
                 startButton.style.display = 'block';
             }
 
             // Statistik-Abruf durch [Right Shift + Escape]
-            if (event.shiftKey && event.key === 'Escape' && event.location === 2) {
+            if (event.shiftKey && event.key === 'Q' && event.location === 2) {
                 showStats();
             }
         });
