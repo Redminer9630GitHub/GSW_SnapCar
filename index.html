@@ -219,11 +219,15 @@
             if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
                 car.lane++;
             }
-            if (event.key === 'E' && event.location === 1) {
+
+            // Freigabe durch [Left Shift + Backspace]
+            if (event.shiftKey && event.key === 'Backspace' && event.location === 1) {
                 gameAllowed = true;
                 startButton.style.display = 'block';
             }
-            if (event.key === 'Q' && event.location === 2) {
+
+            // Statistik-Abruf durch [Right Shift + Escape]
+            if (event.shiftKey && event.key === 'Escape' && event.location === 2) {
                 showStats();
             }
         });
