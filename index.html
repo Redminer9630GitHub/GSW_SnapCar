@@ -22,25 +22,34 @@
             border: 2px solid #333;
             background-color: #87CEEB;
         }
+
+        #score {
+            font-size: 24px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Rennspiel</h1>
     <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
     <canvas id="gameCanvas"></canvas>
+    <div id="score">Score: 0</div>
     
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-
+        const scoreDisplay = document.getElementById('score');
         canvas.width = 800;
         canvas.height = 400;
 
+        let score = 0;
+
         let car = {
-            x: 100,
+            x: canvas.width / 2 - 25,
             y: canvas.height - 80,
             width: 50,
             height: 30,
+            lane: 1, // Es gibt drei Spuren: 0, 1 und 2
             speed: 5,
         };
 
@@ -48,41 +57,128 @@
             width: 200,
             height: canvas.height,
             x: (canvas.width / 2) - 100,
+            lanes: 3,
+            laneWidth: 200 / 3,
         };
+
+        let coins = [];
+        let terrain = [];
+
+        function createCoin() {
+            let lane = Math.floor(Math.random() * road.lanes);
+            coins.push({
+                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 10,
+                y: 0,
+                width: 20,
+                height: 20,
+                collected: false
+            });
+        }
+
+        function createTerrain() {
+            let lane = Math.floor(Math.random() * road.lanes);
+            terrain.push({
+                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 30,
+                y: 0,
+                width: 60,
+                height: 60,
+                type: Math.random() > 0.5 ? 'tree' : 'bush'
+            });
+        }
 
         function drawCar() {
             ctx.fillStyle = 'red';
+            car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
             ctx.fillRect(car.x, car.y, car.width, car.height);
         }
 
         function drawRoad() {
             ctx.fillStyle = 'gray';
             ctx.fillRect(road.x, 0, road.width, road.height);
-            // Mittellinie
             ctx.strokeStyle = 'white';
             ctx.setLineDash([20, 15]);
             ctx.lineWidth = 5;
             ctx.beginPath();
-            ctx.moveTo(road.x + road.width / 2, 0);
-            ctx.lineTo(road.x + road.width / 2, road.height);
+            for (let i = 1; i < road.lanes; i++) {
+                ctx.moveTo(road.x + i * road.laneWidth, 0);
+                ctx.lineTo(road.x + i * road.laneWidth, road.height);
+            }
             ctx.stroke();
         }
 
-        function updateCar() {
-            if (car.x + car.width < canvas.width && car.x > 0) {
-                car.x += car.speed;
-            } else {
-                car.x = 100; // Auto zurücksetzen
-            }
+        function drawCoins() {
+            ctx.fillStyle = 'gold';
+            coins.forEach(coin => {
+                if (!coin.collected) {
+                    ctx.beginPath();
+                    ctx.arc(coin.x + coin.width / 2, coin.y + coin.height / 2, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        }
+
+        function drawTerrain() {
+            terrain.forEach(item => {
+                if (item.type === 'tree') {
+                    ctx.fillStyle = 'green';
+                    ctx.fillRect(item.x, item.y, item.width, item.height);
+                } else {
+                    ctx.fillStyle = 'darkgreen';
+                    ctx.fillRect(item.x, item.y, item.width, item.height / 2);
+                }
+            });
+        }
+
+        function updateCoins() {
+            coins.forEach(coin => {
+                coin.y += car.speed;
+                if (coin.y > canvas.height) {
+                    coins.splice(coins.indexOf(coin), 1); // Coin entfernen, wenn es den Bildschirm verlässt
+                }
+                if (!coin.collected &&
+                    coin.x < car.x + car.width &&
+                    coin.x + coin.width > car.x &&
+                    coin.y < car.y + car.height &&
+                    coin.y + coin.height > car.y) {
+                    coin.collected = true;
+                    score += 10;
+                    scoreDisplay.innerText = `Score: ${score}`;
+                }
+            });
+        }
+
+        function updateTerrain() {
+            terrain.forEach(item => {
+                item.y += car.speed;
+                if (item.y > canvas.height) {
+                    terrain.splice(terrain.indexOf(item), 1); // Terrain entfernen, wenn es den Bildschirm verlässt
+                }
+            });
         }
 
         function updateGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
             drawCar();
-            updateCar();
+            drawCoins();
+            drawTerrain();
+            updateCoins();
+            updateTerrain();
+
+            if (Math.random() < 0.02) createCoin(); // Zufällig Münzen erzeugen
+            if (Math.random() < 0.01) createTerrain(); // Zufällig Terrain erzeugen
+
             requestAnimationFrame(updateGame);
         }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft' && car.lane > 0) {
+                car.lane--;
+            }
+            if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
+                car.lane++;
+            }
+        });
 
         updateGame();
     </script>
