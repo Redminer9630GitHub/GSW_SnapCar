@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSW - Tag der offenen Tür</title>
+    <title>Rennspiel - GSW Tag der offenen Tür</title>
     <style>
         body {
             margin: 0;
@@ -40,13 +40,22 @@
             border-radius: 10px;
             font-size: 32px;
         }
+
+        #startButton {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
     <h1>Rennspiel</h1>
+    <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60s</div>
+    <button id="startButton">Start</button>
     <div id="gameOver">Game Over! Dein Score: <span id="finalScore"></span></div>
 
     <script>
@@ -56,13 +65,13 @@
         const timerDisplay = document.getElementById('timer');
         const gameOverScreen = document.getElementById('gameOver');
         const finalScoreDisplay = document.getElementById('finalScore');
-        
-        canvas.width = 800;
-        canvas.height = 400;
+        const startButton = document.getElementById('startButton');
 
         let score = 0;
-        let timeLeft = 60; // 60 Sekunden Timer
-        let gameRunning = true;
+        let timeLeft = 60;
+        let gameRunning = false;
+        let gameOverOccurred = false;
+        let gameAllowed = false;
 
         let car = {
             x: canvas.width / 2 - 25,
@@ -83,6 +92,7 @@
 
         let coins = [];
         let terrain = [];
+        let timerInterval = null;
 
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
@@ -173,19 +183,18 @@
                 if (item.y > canvas.height) {
                     terrain.splice(terrain.indexOf(item), 1);
                 }
-                // Überprüfung auf Kollision mit Terrain
                 if (item.x < car.x + car.width &&
                     item.x + item.width > car.x &&
                     item.y < car.y + car.height &&
                     item.y + item.height > car.y) {
-                    gameOver();
+                    gameOver('verloren');
                 }
             });
         }
 
         function updateGame() {
             if (!gameRunning) return;
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
             drawCar();
@@ -194,7 +203,6 @@
             updateCoins();
             updateTerrain();
 
-            // Zufälliges Erzeugen von Münzen und Terrain mit Mindestabstand
             if (coins.length === 0 || coins[coins.length - 1].y > 50) {
                 if (Math.random() < 0.02) createCoin();
             }
@@ -212,28 +220,86 @@
             if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
                 car.lane++;
             }
+            if (event.key === 'Shift' && event.code === 'Backspace' && event.location === 1) {
+                gameAllowed = true;
+                startButton.style.display = 'block';
+            }
+            if (event.key === 'Shift' && event.code === 'Escape' && event.location === 2) {
+                showStats();
+            }
         });
 
         function startTimer() {
-            const timerInterval = setInterval(() => {
+            timeLeft = 60;
+            timerInterval = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
                     timerDisplay.innerText = `Zeit: ${timeLeft}s`;
                 } else {
-                    clearInterval(timerInterval);
-                    gameOver();
+                    gameOver('zeitum');
                 }
             }, 1000);
         }
 
-        function gameOver() {
+        function gameOver(reason) {
+            clearInterval(timerInterval);
             gameRunning = false;
+            gameOverOccurred = true;
             finalScoreDisplay.innerText = score;
             gameOverScreen.style.display = 'block';
+            updateStats(reason);
         }
 
-        startTimer();
-        updateGame();
+        function startGame() {
+            if (gameAllowed) {
+                score = 0;
+                scoreDisplay.innerText = `Score: ${score}`;
+                gameOverScreen.style.display = 'none';
+                startButton.style.display = 'none';
+                gameRunning = true;
+                gameOverOccurred = false;
+                startTimer();
+                updateGame();
+                updateStats('gespielt');
+            }
+        }
+
+        startButton.addEventListener('click', startGame);
+
+        function updateStats(status) {
+            let stats = JSON.parse(localStorage.getItem('gameStats')) || {
+                gewonnen: 0,
+                verloren: 0,
+                zeitum: 0,
+                score: 0,
+                gespielt: 0
+            };
+
+            if (status === 'gewonnen') {
+                stats.gewonnen += 1;
+            } else if (status === 'verloren') {
+                stats.verloren += 1;
+            } else if (status === 'zeitum') {
+                stats.zeitum += 1;
+            } else if (status === 'gespielt') {
+                stats.gespielt += 1;
+            }
+
+            stats.score += score;
+            localStorage.setItem('gameStats', JSON.stringify(stats));
+        }
+
+        function showStats() {
+            let stats = JSON.parse(localStorage.getItem('gameStats')) || {
+                gewonnen: 0,
+                verloren: 0,
+                zeitum: 0,
+                score: 0,
+                gespielt: 0
+            };
+
+            alert(`Statistik:\nGewonnen: ${stats.gewonnen}\nVerloren: ${stats.verloren}\nZeit abgelaufen: ${stats.zeitum}\nGesamt-Score: ${stats.score}\nSpiele gestartet: ${stats.gespielt}`);
+        }
     </script>
 </body>
 </html>
