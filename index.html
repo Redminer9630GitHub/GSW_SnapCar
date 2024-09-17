@@ -220,11 +220,11 @@
             if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
                 car.lane++;
             }
-            if (event.key === 'Shift' && event.code === 'Backspace' && event.location === 1) {
+            if (event.key === 'E' && event.location === 1) {
                 gameAllowed = true;
                 startButton.style.display = 'block';
             }
-            if (event.key === 'Shift' && event.code === 'Escape' && event.location === 2) {
+            if (event.key === 'Q' && event.location === 2) {
                 showStats();
             }
         });
