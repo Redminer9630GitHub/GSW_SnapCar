@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rennspiel - GSW Tag der offenen Tür</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #333;
+            background-color: #87CEEB;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rennspiel</h1>
+    <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
+    <canvas id="gameCanvas"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = 800;
+        canvas.height = 400;
+
+        let car = {
+            x: 100,
+            y: canvas.height - 80,
+            width: 50,
+            height: 30,
+            speed: 5,
+        };
+
+        let road = {
+            width: 200,
+            height: canvas.height,
+            x: (canvas.width / 2) - 100,
+        };
+
+        function drawCar() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(car.x, car.y, car.width, car.height);
+        }
+
+        function drawRoad() {
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(road.x, 0, road.width, road.height);
+            // Mittellinie
+            ctx.strokeStyle = 'white';
+            ctx.setLineDash([20, 15]);
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(road.x + road.width / 2, 0);
+            ctx.lineTo(road.x + road.width / 2, road.height);
+            ctx.stroke();
+        }
+
+        function updateCar() {
+            if (car.x + car.width < canvas.width && car.x > 0) {
+                car.x += car.speed;
+            } else {
+                car.x = 100; // Auto zurücksetzen
+            }
+        }
+
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawRoad();
+            drawCar();
+            updateCar();
+            requestAnimationFrame(updateGame);
+        }
+
+        updateGame();
+    </script>
+</body>
+</html>
