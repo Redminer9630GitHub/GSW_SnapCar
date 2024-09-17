@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rennspiel - GSW Tag der offenen Tür</title>
+    <title>GSW - Tag der offenen Tür</title>
     <style>
         body {
             margin: 0;
@@ -23,33 +23,53 @@
             background-color: #87CEEB;
         }
 
-        #score {
+        #score, #timer {
             font-size: 24px;
-            margin-top: 20px;
+            margin-top: 10px;
+        }
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 32px;
         }
     </style>
 </head>
 <body>
     <h1>Rennspiel</h1>
-    <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
-    
+    <div id="timer">Zeit: 60s</div>
+    <div id="gameOver">Game Over! Dein Score: <span id="finalScore"></span></div>
+
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const gameOverScreen = document.getElementById('gameOver');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        
         canvas.width = 800;
         canvas.height = 400;
 
         let score = 0;
+        let timeLeft = 60; // 60 Sekunden Timer
+        let gameRunning = true;
 
         let car = {
             x: canvas.width / 2 - 25,
             y: canvas.height - 80,
             width: 50,
             height: 30,
-            lane: 1, // Es gibt drei Spuren: 0, 1 und 2
+            lane: 1,
             speed: 5,
         };
 
@@ -133,7 +153,7 @@
             coins.forEach(coin => {
                 coin.y += car.speed;
                 if (coin.y > canvas.height) {
-                    coins.splice(coins.indexOf(coin), 1); // Coin entfernen, wenn es den Bildschirm verlässt
+                    coins.splice(coins.indexOf(coin), 1);
                 }
                 if (!coin.collected &&
                     coin.x < car.x + car.width &&
@@ -151,12 +171,21 @@
             terrain.forEach(item => {
                 item.y += car.speed;
                 if (item.y > canvas.height) {
-                    terrain.splice(terrain.indexOf(item), 1); // Terrain entfernen, wenn es den Bildschirm verlässt
+                    terrain.splice(terrain.indexOf(item), 1);
+                }
+                // Überprüfung auf Kollision mit Terrain
+                if (item.x < car.x + car.width &&
+                    item.x + item.width > car.x &&
+                    item.y < car.y + car.height &&
+                    item.y + item.height > car.y) {
+                    gameOver();
                 }
             });
         }
 
         function updateGame() {
+            if (!gameRunning) return;
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
             drawCar();
@@ -165,8 +194,13 @@
             updateCoins();
             updateTerrain();
 
-            if (Math.random() < 0.02) createCoin(); // Zufällig Münzen erzeugen
-            if (Math.random() < 0.01) createTerrain(); // Zufällig Terrain erzeugen
+            // Zufälliges Erzeugen von Münzen und Terrain mit Mindestabstand
+            if (coins.length === 0 || coins[coins.length - 1].y > 50) {
+                if (Math.random() < 0.02) createCoin();
+            }
+            if (terrain.length === 0 || terrain[terrain.length - 1].y > 50) {
+                if (Math.random() < 0.01) createTerrain();
+            }
 
             requestAnimationFrame(updateGame);
         }
@@ -180,6 +214,25 @@
             }
         });
 
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    timerDisplay.innerText = `Zeit: ${timeLeft}s`;
+                } else {
+                    clearInterval(timerInterval);
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            finalScoreDisplay.innerText = score;
+            gameOverScreen.style.display = 'block';
+        }
+
+        startTimer();
         updateGame();
     </script>
 </body>
