@@ -40,13 +40,21 @@
             border-radius: 10px;
             font-size: 32px;
         }
+
+        #startButton {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
-    <h1>Rennspiel</h1>
+    <h1>Tag der Offenen Tür</h1>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60s</div>
+    <button id="startButton">Start</button>
     <div id="gameOver">Game Over! Dein Score: <span id="finalScore"></span></div>
 
     <script>
@@ -56,13 +64,26 @@
         const timerDisplay = document.getElementById('timer');
         const gameOverScreen = document.getElementById('gameOver');
         const finalScoreDisplay = document.getElementById('finalScore');
-        
-        canvas.width = 800;
-        canvas.height = 400;
+        const startButton = document.getElementById('startButton');
 
         let score = 0;
-        let timeLeft = 60; // 60 Sekunden Timer
-        let gameRunning = true;
+        let timeLeft = 60;
+        let gameRunning = false;
+        let gameOverOccurred = false;
+        let gameAllowed = false;
+
+        // Bilder für die Umgebung
+        const carImg = new Image();
+        carImg.src = 'car.png'; // Auto-Bild
+
+        const coinImg = new Image();
+        coinImg.src = 'coin.png'; // Münz-Bild
+
+        const treeImg = new Image();
+        treeImg.src = 'tree.png'; // Baum-Bild
+
+        const bushImg = new Image();
+        bushImg.src = 'bush.png'; // Busch-Bild
 
         let car = {
             x: canvas.width / 2 - 25,
@@ -83,6 +104,7 @@
 
         let coins = [];
         let terrain = [];
+        let timerInterval = null;
 
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
@@ -107,9 +129,9 @@
         }
 
         function drawCar() {
-            ctx.fillStyle = 'red';
+            // Auto als Bild zeichnen
             car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
-            ctx.fillRect(car.x, car.y, car.width, car.height);
+            ctx.drawImage(carImg, car.x, car.y, car.width, car.height);
         }
 
         function drawRoad() {
@@ -127,12 +149,10 @@
         }
 
         function drawCoins() {
-            ctx.fillStyle = 'gold';
             coins.forEach(coin => {
                 if (!coin.collected) {
-                    ctx.beginPath();
-                    ctx.arc(coin.x + coin.width / 2, coin.y + coin.height / 2, 10, 0, Math.PI * 2);
-                    ctx.fill();
+                    // Münzen als Bild zeichnen
+                    ctx.drawImage(coinImg, coin.x, coin.y, coin.width, coin.height);
                 }
             });
         }
@@ -140,11 +160,11 @@
         function drawTerrain() {
             terrain.forEach(item => {
                 if (item.type === 'tree') {
-                    ctx.fillStyle = 'green';
-                    ctx.fillRect(item.x, item.y, item.width, item.height);
+                    // Bäume als Bild zeichnen
+                    ctx.drawImage(treeImg, item.x, item.y, item.width, item.height);
                 } else {
-                    ctx.fillStyle = 'darkgreen';
-                    ctx.fillRect(item.x, item.y, item.width, item.height / 2);
+                    // Büsche als Bild zeichnen
+                    ctx.drawImage(bushImg, item.x, item.y, item.width, item.height / 2);
                 }
             });
         }
@@ -173,19 +193,18 @@
                 if (item.y > canvas.height) {
                     terrain.splice(terrain.indexOf(item), 1);
                 }
-                // Überprüfung auf Kollision mit Terrain
                 if (item.x < car.x + car.width &&
                     item.x + item.width > car.x &&
                     item.y < car.y + car.height &&
                     item.y + item.height > car.y) {
-                    gameOver();
+                    gameOver('verloren');
                 }
             });
         }
 
         function updateGame() {
             if (!gameRunning) return;
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
             drawCar();
@@ -194,7 +213,6 @@
             updateCoins();
             updateTerrain();
 
-            // Zufälliges Erzeugen von Münzen und Terrain mit Mindestabstand
             if (coins.length === 0 || coins[coins.length - 1].y > 50) {
                 if (Math.random() < 0.02) createCoin();
             }
@@ -212,28 +230,88 @@
             if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
                 car.lane++;
             }
+
+            if (event.shiftKey && event.key === 'Backspace' && event.location === 1) {
+                gameAllowed = true;
+                startButton.style.display = 'block';
+            }
+
+            if (event.shiftKey && event.key === 'Escape' && event.location === 2) {
+                showStats();
+            }
         });
 
         function startTimer() {
-            const timerInterval = setInterval(() => {
+            timeLeft = 60;
+            timerInterval = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
                     timerDisplay.innerText = `Zeit: ${timeLeft}s`;
                 } else {
-                    clearInterval(timerInterval);
-                    gameOver();
+                    gameOver('zeitum');
                 }
             }, 1000);
         }
 
-        function gameOver() {
+        function gameOver(reason) {
+            clearInterval(timerInterval);
             gameRunning = false;
+            gameOverOccurred = true;
             finalScoreDisplay.innerText = score;
             gameOverScreen.style.display = 'block';
+            updateStats(reason);
         }
 
-        startTimer();
-        updateGame();
+        function startGame() {
+            if (gameAllowed) {
+                score = 0;
+                scoreDisplay.innerText = `Score: ${score}`;
+                gameOverScreen.style.display = 'none';
+                startButton.style.display = 'none';
+                gameRunning = true;
+                gameOverOccurred = false;
+                startTimer();
+                updateGame();
+                updateStats('gespielt');
+            }
+        }
+
+        startButton.addEventListener('click', startGame);
+
+        function updateStats(status) {
+            let stats = JSON.parse(localStorage.getItem('gameStats')) || {
+                gewonnen: 0,
+                verloren: 0,
+                zeitum: 0,
+                score: 0,
+                gespielt: 0
+            };
+
+            if (status === 'gewonnen') {
+                stats.gewonnen += 1;
+            } else if (status === 'verloren') {
+                stats.verloren += 1;
+            } else if (status === 'zeitum') {
+                stats.zeitum += 1;
+            } else if (status === 'gespielt') {
+                stats.gespielt += 1;
+            }
+
+            stats.score += score;
+            localStorage.setItem('gameStats', JSON.stringify(stats));
+        }
+
+        function showStats() {
+            let stats = JSON.parse(localStorage.getItem('gameStats')) || {
+                gewonnen: 0,
+                verloren: 0,
+                zeitum: 0,
+                score: 0,
+                gespielt: 0
+            };
+
+            alert(`Statistik:\nGewonnen: ${stats.gewonnen}\nVerloren: ${stats.verloren}\nZeit abgelaufen: ${stats.zeitum}\nGesamt-Score: ${stats.score}\nSpiele gestartet: ${stats.gespielt}`);
+        }
     </script>
 </body>
-</html>                
+</html>
