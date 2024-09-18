@@ -17,7 +17,7 @@
         }
 
         canvas {
-            display: block;
+            display: none;
             margin: 20px auto;
             border: 2px solid #333;
             background-color: #87CEEB;
@@ -33,6 +33,21 @@
             font-size: 32px;
             color: red;
         }
+
+        #startButton {
+            display: block;
+            font-size: 24px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+
+        #startButton:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +57,7 @@
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60</div>
     <div id="gameOver"></div>
+    <button id="startButton">Start</button>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -49,6 +65,7 @@
         const scoreDisplay = document.getElementById('score');
         const timerDisplay = document.getElementById('timer');
         const gameOverDisplay = document.getElementById('gameOver');
+        const startButton = document.getElementById('startButton');
         canvas.width = 800;
         canvas.height = 400;
 
@@ -66,6 +83,9 @@
             img: new Image(),
         };
         car.img.src = 'https://example.com/car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
+        car.img.onerror = () => {
+            car.img.src = 'https://example.com/error.png'; // Fehlertextur
+        };
 
         let road = {
             width: 200,
@@ -84,15 +104,19 @@
             let y = -Math.random() * canvas.height;
             if (y - lastSpawnY < 150) y = lastSpawnY - 150; // Mindestabstand
             lastSpawnY = y;
+            let coinImg = new Image();
+            coinImg.src = 'coin.png'; // Ersetze mit dem Münzen-Bild
+            coinImg.onerror = () => {
+                coinImg.src = 'error.png'; // Fehlertextur
+            };
             coins.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 15,
                 y: y,
                 width: 30,
                 height: 30,
                 collected: false,
-                img: new Image(),
+                img: coinImg,
             });
-            coins[coins.length - 1].img.src = 'coin.jpng'; // Ersetze mit dem Münzen-Bild
         }
 
         function createTree() {
@@ -100,14 +124,18 @@
             let y = -Math.random() * canvas.height;
             if (y - lastSpawnY < 150) y = lastSpawnY - 150; // Mindestabstand
             lastSpawnY = y;
+            let treeImg = new Image();
+            treeImg.src = 'tree.png'; // Ersetze mit dem Baum-Bild
+            treeImg.onerror = () => {
+                treeImg.src = 'error.png'; // Fehlertextur
+            };
             trees.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 30,
                 y: y,
                 width: 60,
                 height: 100,
-                img: new Image(),
+                img: treeImg,
             });
-            trees[trees.length - 1].img.src = 'tree.png'; // Ersetze mit dem Baum-Bild
         }
 
         function drawCar() {
@@ -180,6 +208,11 @@
             gameOver = true;
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
+
+            // Nach 10 Sekunden den Start-Button wieder anzeigen
+            setTimeout(() => {
+                startButton.style.display = 'block';
+            }, 10000);
         }
 
         function updateGame() {
@@ -220,8 +253,18 @@
             }
         });
 
-        startTimer();
-        updateGame();
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none';
+            canvas.style.display = 'block';
+            score = 0;
+            timeLeft = 60;
+            gameOver = false;
+            gameOverDisplay.style.display = 'none';
+            scoreDisplay.innerText = `Score: 0`;
+            timerDisplay.innerText = `Zeit: 60`;
+            startTimer();
+            updateGame();
+        });
     </script>
 </body>
 </html>
