@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSW - Tag der offenen Tür</title>
+    <title>Rennspiel - GSW Tag der offenen Tür</title>
     <style>
         body {
             margin: 0;
@@ -25,74 +25,47 @@
 
         #score, #timer {
             font-size: 24px;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
         #gameOver {
             display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
             font-size: 32px;
-        }
-
-        #startButton {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 18px;
+            color: red;
         }
     </style>
 </head>
 <body>
-    <h1>Tag der Offenen Tür</h1>
+    <h1>Rennspiel</h1>
+    <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
-    <div id="timer">Zeit: 60s</div>
-    <button id="startButton">Start</button>
-    <div id="gameOver">Game Over! Dein Score: <span id="finalScore"></span></div>
+    <div id="timer">Zeit: 60</div>
+    <div id="gameOver"></div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
         const timerDisplay = document.getElementById('timer');
-        const gameOverScreen = document.getElementById('gameOver');
-        const finalScoreDisplay = document.getElementById('finalScore');
-        const startButton = document.getElementById('startButton');
+        const gameOverDisplay = document.getElementById('gameOver');
+        canvas.width = 800;
+        canvas.height = 400;
 
         let score = 0;
+        let gameOver = false;
         let timeLeft = 60;
-        let gameRunning = false;
-        let gameOverOccurred = false;
-        let gameAllowed = false;
-
-        // Bilder für die Umgebung
-        const carImg = new Image();
-        carImg.src = 'car.png'; // Auto-Bild
-
-        const coinImg = new Image();
-        coinImg.src = 'coin.png'; // Münz-Bild
-
-        const treeImg = new Image();
-        treeImg.src = 'tree.png'; // Baum-Bild
-
-        const bushImg = new Image();
-        bushImg.src = 'bush.png'; // Busch-Bild
 
         let car = {
             x: canvas.width / 2 - 25,
             y: canvas.height - 80,
             width: 50,
-            height: 30,
-            lane: 1,
+            height: 100,
+            lane: 1, // Es gibt drei Spuren: 0, 1 und 2
             speed: 5,
+            img: new Image(),
         };
+        car.img.src = 'https://example.com/car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
 
         let road = {
             width: 200,
@@ -103,35 +76,43 @@
         };
 
         let coins = [];
-        let terrain = [];
-        let timerInterval = null;
+        let trees = [];
+        let lastSpawnY = -150;
 
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
+            let y = -Math.random() * canvas.height;
+            if (y - lastSpawnY < 150) y = lastSpawnY - 150; // Mindestabstand
+            lastSpawnY = y;
             coins.push({
-                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 10,
-                y: 0,
-                width: 20,
-                height: 20,
-                collected: false
+                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 15,
+                y: y,
+                width: 30,
+                height: 30,
+                collected: false,
+                img: new Image(),
             });
+            coins[coins.length - 1].img.src = 'https://example.com/coin.png'; // Ersetze mit dem Münzen-Bild
         }
 
-        function createTerrain() {
+        function createTree() {
             let lane = Math.floor(Math.random() * road.lanes);
-            terrain.push({
+            let y = -Math.random() * canvas.height;
+            if (y - lastSpawnY < 150) y = lastSpawnY - 150; // Mindestabstand
+            lastSpawnY = y;
+            trees.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 30,
-                y: 0,
+                y: y,
                 width: 60,
-                height: 60,
-                type: Math.random() > 0.5 ? 'tree' : 'bush'
+                height: 100,
+                img: new Image(),
             });
+            trees[trees.length - 1].img.src = 'https://example.com/tree.png'; // Ersetze mit dem Baum-Bild
         }
 
         function drawCar() {
-            // Auto als Bild zeichnen
             car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
-            ctx.drawImage(carImg, car.x, car.y, car.width, car.height);
+            ctx.drawImage(car.img, car.x, car.y, car.width, car.height);
         }
 
         function drawRoad() {
@@ -151,21 +132,14 @@
         function drawCoins() {
             coins.forEach(coin => {
                 if (!coin.collected) {
-                    // Münzen als Bild zeichnen
-                    ctx.drawImage(coinImg, coin.x, coin.y, coin.width, coin.height);
+                    ctx.drawImage(coin.img, coin.x, coin.y, coin.width, coin.height);
                 }
             });
         }
 
-        function drawTerrain() {
-            terrain.forEach(item => {
-                if (item.type === 'tree') {
-                    // Bäume als Bild zeichnen
-                    ctx.drawImage(treeImg, item.x, item.y, item.width, item.height);
-                } else {
-                    // Büsche als Bild zeichnen
-                    ctx.drawImage(bushImg, item.x, item.y, item.width, item.height / 2);
-                }
+        function drawTrees() {
+            trees.forEach(tree => {
+                ctx.drawImage(tree.img, tree.x, tree.y, tree.width, tree.height);
             });
         }
 
@@ -187,40 +161,54 @@
             });
         }
 
-        function updateTerrain() {
-            terrain.forEach(item => {
-                item.y += car.speed;
-                if (item.y > canvas.height) {
-                    terrain.splice(terrain.indexOf(item), 1);
+        function updateTrees() {
+            trees.forEach(tree => {
+                tree.y += car.speed;
+                if (tree.y > canvas.height) {
+                    trees.splice(trees.indexOf(tree), 1);
                 }
-                if (item.x < car.x + car.width &&
-                    item.x + item.width > car.x &&
-                    item.y < car.y + car.height &&
-                    item.y + item.height > car.y) {
-                    gameOver('verloren');
+                if (tree.x < car.x + car.width &&
+                    tree.x + tree.width > car.x &&
+                    tree.y < car.y + car.height &&
+                    tree.y + tree.height > car.y) {
+                    endGame();
                 }
             });
         }
 
+        function endGame() {
+            gameOver = true;
+            gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.style.display = 'block';
+        }
+
         function updateGame() {
-            if (!gameRunning) return;
+            if (gameOver) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
             drawCar();
             drawCoins();
-            drawTerrain();
+            drawTrees();
             updateCoins();
-            updateTerrain();
+            updateTrees();
 
-            if (coins.length === 0 || coins[coins.length - 1].y > 50) {
-                if (Math.random() < 0.02) createCoin();
-            }
-            if (terrain.length === 0 || terrain[terrain.length - 1].y > 50) {
-                if (Math.random() < 0.01) createTerrain();
-            }
+            if (Math.random() < 0.02) createCoin();
+            if (Math.random() < 0.01) createTree();
 
             requestAnimationFrame(updateGame);
+        }
+
+        function startTimer() {
+            const timer = setInterval(() => {
+                if (gameOver || timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (!gameOver) endGame();
+                } else {
+                    timeLeft--;
+                    timerDisplay.innerText = `Zeit: ${timeLeft}`;
+                }
+            }, 1000);
         }
 
         document.addEventListener('keydown', (event) => {
@@ -230,88 +218,10 @@
             if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
                 car.lane++;
             }
-
-            if (event.shiftKey && event.key === 'Backspace' && event.location === 1) {
-                gameAllowed = true;
-                startButton.style.display = 'block';
-            }
-
-            if (event.shiftKey && event.key === 'Escape' && event.location === 2) {
-                showStats();
-            }
         });
 
-        function startTimer() {
-            timeLeft = 60;
-            timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    timerDisplay.innerText = `Zeit: ${timeLeft}s`;
-                } else {
-                    gameOver('zeitum');
-                }
-            }, 1000);
-        }
-
-        function gameOver(reason) {
-            clearInterval(timerInterval);
-            gameRunning = false;
-            gameOverOccurred = true;
-            finalScoreDisplay.innerText = score;
-            gameOverScreen.style.display = 'block';
-            updateStats(reason);
-        }
-
-        function startGame() {
-            if (gameAllowed) {
-                score = 0;
-                scoreDisplay.innerText = `Score: ${score}`;
-                gameOverScreen.style.display = 'none';
-                startButton.style.display = 'none';
-                gameRunning = true;
-                gameOverOccurred = false;
-                startTimer();
-                updateGame();
-                updateStats('gespielt');
-            }
-        }
-
-        startButton.addEventListener('click', startGame);
-
-        function updateStats(status) {
-            let stats = JSON.parse(localStorage.getItem('gameStats')) || {
-                gewonnen: 0,
-                verloren: 0,
-                zeitum: 0,
-                score: 0,
-                gespielt: 0
-            };
-
-            if (status === 'gewonnen') {
-                stats.gewonnen += 1;
-            } else if (status === 'verloren') {
-                stats.verloren += 1;
-            } else if (status === 'zeitum') {
-                stats.zeitum += 1;
-            } else if (status === 'gespielt') {
-                stats.gespielt += 1;
-            }
-
-            stats.score += score;
-            localStorage.setItem('gameStats', JSON.stringify(stats));
-        }
-
-        function showStats() {
-            let stats = JSON.parse(localStorage.getItem('gameStats')) || {
-                gewonnen: 0,
-                verloren: 0,
-                zeitum: 0,
-                score: 0,
-                gespielt: 0
-            };
-
-            alert(`Statistik:\nGewonnen: ${stats.gewonnen}\nVerloren: ${stats.verloren}\nZeit abgelaufen: ${stats.zeitum}\nGesamt-Score: ${stats.score}\nSpiele gestartet: ${stats.gespielt}`);
-        }
+        startTimer();
+        updateGame();
     </script>
 </body>
 </html>
