@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rennspiel - GSW Tag der offenen Tür</title>
+    <title>GSW 7 Jahrgang - Tag der offenen Tür</title>
     <style>
         body {
             margin: 0;
@@ -35,16 +35,14 @@
         }
 
         #startButton {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            display: block;
             font-size: 24px;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
+            margin-top: 50px;
         }
 
         #startButton:hover {
@@ -54,7 +52,7 @@
 </head>
 <body>
     <h1>Rennspiel</h1>
-    <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
+    <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60</div>
@@ -74,19 +72,19 @@
         let score = 0;
         let gameOver = false;
         let timeLeft = 60;
-        let intervalId;
-        let animationId;
 
         let car = {
+            x: canvas.width / 2 - 25,
+            y: canvas.height - 80,
             width: 50,
             height: 100,
             lane: 1, // Es gibt drei Spuren: 0, 1 und 2
             speed: 5,
             img: new Image(),
         };
-        car.img.src = 'https://example.com/car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
+        car.img.src = 'car.png'; // Stelle sicher, dass dieser Pfad korrekt ist
         car.img.onerror = () => {
-            car.img.src = 'https://example.com/error.png'; // Fehlertextur
+            car.img.src = 'error.png'; // Fehlertextur, falls Bild nicht gefunden wird
         };
 
         let road = {
@@ -101,18 +99,6 @@
         let trees = [];
         let lastSpawnY = -150;
 
-        function resetGame() {
-            score = 0;
-            timeLeft = 60;
-            gameOver = false;
-            coins = [];
-            trees = [];
-            car.lane = 1;
-            scoreDisplay.innerText = `Score: 0`;
-            timerDisplay.innerText = `Zeit: 60`;
-            gameOverDisplay.style.display = 'none';
-        }
-
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
             let y = -Math.random() * canvas.height;
@@ -120,9 +106,6 @@
             lastSpawnY = y;
             let coinImg = new Image();
             coinImg.src = 'coin.png'; // Ersetze mit dem Münzen-Bild
-            coinImg.onerror = () => {
-                coinImg.src = 'error.png'; // Fehlertextur
-            };
             coins.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 15,
                 y: y,
@@ -140,9 +123,6 @@
             lastSpawnY = y;
             let treeImg = new Image();
             treeImg.src = 'tree.png'; // Ersetze mit dem Baum-Bild
-            treeImg.onerror = () => {
-                treeImg.src = 'error.png'; // Fehlertextur
-            };
             trees.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 30,
                 y: y,
@@ -220,15 +200,13 @@
 
         function endGame() {
             gameOver = true;
-            clearInterval(intervalId);
-            cancelAnimationFrame(animationId);
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             // Nach 10 Sekunden den Start-Button wieder anzeigen
             setTimeout(() => {
                 startButton.style.display = 'block';
-            }, 10000);
+            }, 5000);
         }
 
         function updateGame() {
@@ -245,13 +223,13 @@
             if (Math.random() < 0.02) createCoin();
             if (Math.random() < 0.01) createTree();
 
-            animationId = requestAnimationFrame(updateGame);
+            requestAnimationFrame(updateGame);
         }
 
         function startTimer() {
-            intervalId = setInterval(() => {
+            const timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
-                    clearInterval(intervalId);
+                    clearInterval(timer);
                     if (!gameOver) endGame();
                 } else {
                     timeLeft--;
@@ -272,7 +250,12 @@
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none';
             canvas.style.display = 'block';
-            resetGame();
+            score = 0;
+            timeLeft = 60;
+            gameOver = false;
+            gameOverDisplay.style.display = 'none';
+            scoreDisplay.innerText = `Score: 0`;
+            timerDisplay.innerText = `Zeit: 60`;
             startTimer();
             updateGame();
         });
