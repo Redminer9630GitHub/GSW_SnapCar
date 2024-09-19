@@ -82,9 +82,9 @@
             speed: 5,
             img: new Image(),
         };
-        car.img.src = 'https://example.com/car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
+        car.img.src = 'car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
         car.img.onerror = () => {
-            car.img.src = 'https://example.com/error.png'; // Fehlertextur
+            car.img.src = 'error.png'; // Fehlertextur
         };
 
         let road = {
@@ -212,7 +212,7 @@
             // Nach 10 Sekunden den Start-Button wieder anzeigen
             setTimeout(() => {
                 startButton.style.display = 'block';
-            }, 10000);
+            }, 5u000);
         }
 
         function updateGame() {
