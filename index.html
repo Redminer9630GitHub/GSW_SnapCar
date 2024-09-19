@@ -128,11 +128,11 @@
 
         let coins = [];
         let trees = [];
-        let lastSpawnY = -200;  // Letzter Y-Spawn-Position, damit Abstände größer sind (Minimum 50px)
+        let lastSpawnY = -800;  // Letzter Y-Spawn-Position, damit Abstände größer sind (Minimum 50px)
 
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
-            let y = Math.min(-50, lastSpawnY - 50 - Math.random() * canvas.height); // Abstand von mindestens 50px
+            let y = Math.min(-100, lastSpawnY - 100 - Math.random() * canvas.height); // Abstand von mindestens 50px
             lastSpawnY = y;
             let coinImg = new Image();
             coinImg.src = 'coin.png';
@@ -231,6 +231,11 @@
             gameOver = true;
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
+            if (score > 200) {
+                gameOverDisplay.innerText = `Gewonnnen! Dein Score: ${score}`;
+                if (score > highscore) {
+                    gameOverDisplay.innerText = `Gewonnen! Du hast den Highscore gecknakt! Dein Score: ${score}`;
+            }
 
             if (score > highscore) {
                 highscore = score;
