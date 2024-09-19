@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSW 7 Jahrgang - Tag der offenen Tür</title>
+    <title>Rennspiel - GSW Tag der offenen Tür</title>
     <style>
         body {
             margin: 0;
@@ -35,14 +35,16 @@
         }
 
         #startButton {
-            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             font-size: 24px;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
-            margin-top: 50px;
         }
 
         #startButton:hover {
@@ -52,7 +54,7 @@
 </head>
 <body>
     <h1>Rennspiel</h1>
-    <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
+    <p>Erstellt von Redminer9630 für den Tag der offenen Tür der GSW</p>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60</div>
@@ -72,19 +74,19 @@
         let score = 0;
         let gameOver = false;
         let timeLeft = 60;
+        let intervalId;
+        let animationId;
 
         let car = {
-            x: canvas.width / 2 - 25,
-            y: canvas.height - 80,
             width: 50,
             height: 100,
             lane: 1, // Es gibt drei Spuren: 0, 1 und 2
             speed: 5,
             img: new Image(),
         };
-        car.img.src = 'car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
+        car.img.src = 'https://example.com/car.png'; // Ersetze mit dem tatsächlichen Pfad zum Auto-Bild
         car.img.onerror = () => {
-            car.img.src = 'error.png'; // Fehlertextur
+            car.img.src = 'https://example.com/error.png'; // Fehlertextur
         };
 
         let road = {
@@ -98,6 +100,18 @@
         let coins = [];
         let trees = [];
         let lastSpawnY = -150;
+
+        function resetGame() {
+            score = 0;
+            timeLeft = 60;
+            gameOver = false;
+            coins = [];
+            trees = [];
+            car.lane = 1;
+            scoreDisplay.innerText = `Score: 0`;
+            timerDisplay.innerText = `Zeit: 60`;
+            gameOverDisplay.style.display = 'none';
+        }
 
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
@@ -206,13 +220,15 @@
 
         function endGame() {
             gameOver = true;
+            clearInterval(intervalId);
+            cancelAnimationFrame(animationId);
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             // Nach 10 Sekunden den Start-Button wieder anzeigen
             setTimeout(() => {
                 startButton.style.display = 'block';
-            }, 5000);
+            }, 10000);
         }
 
         function updateGame() {
@@ -229,13 +245,13 @@
             if (Math.random() < 0.02) createCoin();
             if (Math.random() < 0.01) createTree();
 
-            requestAnimationFrame(updateGame);
+            animationId = requestAnimationFrame(updateGame);
         }
 
         function startTimer() {
-            const timer = setInterval(() => {
+            intervalId = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
-                    clearInterval(timer);
+                    clearInterval(intervalId);
                     if (!gameOver) endGame();
                 } else {
                     timeLeft--;
@@ -256,12 +272,7 @@
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none';
             canvas.style.display = 'block';
-            score = 0;
-            timeLeft = 60;
-            gameOver = false;
-            gameOverDisplay.style.display = 'none';
-            scoreDisplay.innerText = `Score: 0`;
-            timerDisplay.innerText = `Zeit: 60`;
+            resetGame();
             startTimer();
             updateGame();
         });
