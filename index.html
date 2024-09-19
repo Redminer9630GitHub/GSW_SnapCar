@@ -42,7 +42,7 @@
             color: white;
             border: none;
             cursor: pointer;
-            margin-top: 30px;
+            margin-top: 50px;
             margin-left: 50%;
         }
 
@@ -73,19 +73,44 @@
         let score = 0;
         let gameOver = false;
         let timeLeft = 60;
+        let startDelay = 0;
+
+        // Funktion zum Extrahieren von URL-Parametern
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.has(name) ? urlParams.get(name) : null;
+        }
+
+        // Zeit und Startbutton-Verzögerung aus URL-Parametern holen
+        const zeitParameter = getUrlParameter('zeit');
+        const freeStartParameter = getUrlParameter('freeStart');
+
+        // Zeit-Parameter anwenden
+        if (zeitParameter) {
+            timeLeft = parseInt(zeitParameter);
+            timerDisplay.innerText = `Zeit: ${timeLeft}`;
+        }
+
+        // Verzögerung für den Start-Button anwenden
+        if (freeStartParameter) {
+            startDelay = parseInt(freeStartParameter);
+            setTimeout(() => {
+                startButton.style.display = 'block';
+            }, startDelay * 1000);
+        }
 
         let car = {
             x: canvas.width / 2 - 25,
             y: canvas.height - 80,
             width: 50,
             height: 100,
-            lane: 1, // Es gibt drei Spuren: 0, 1 und 2
+            lane: 1,
             speed: 5,
             img: new Image(),
         };
-        car.img.src = 'car.png'; // Stelle sicher, dass dieser Pfad korrekt ist
+        car.img.src = 'car.png';
         car.img.onerror = () => {
-            car.img.src = 'error.png'; // Fehlertextur, falls Bild nicht gefunden wird
+            car.img.src = 'error.png';
         };
 
         let road = {
@@ -103,10 +128,10 @@
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
             let y = -Math.random() * canvas.height;
-            if (y - lastSpawnY < 150) y = lastSpawnY - 150; // Mindestabstand
+            if (y - lastSpawnY < 150) y = lastSpawnY - 150;
             lastSpawnY = y;
             let coinImg = new Image();
-            coinImg.src = 'coin.png'; // Ersetze mit dem Münzen-Bild
+            coinImg.src = 'coin.png';
             coins.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 15,
                 y: y,
@@ -120,10 +145,10 @@
         function createTree() {
             let lane = Math.floor(Math.random() * road.lanes);
             let y = -Math.random() * canvas.height;
-            if (y - lastSpawnY < 150) y = lastSpawnY - 150; // Mindestabstand
+            if (y - lastSpawnY < 150) y = lastSpawnY - 150;
             lastSpawnY = y;
             let treeImg = new Image();
-            treeImg.src = 'tree.png'; // Ersetze mit dem Baum-Bild
+            treeImg.src = 'tree.png';
             trees.push({
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 30,
                 y: y,
@@ -204,7 +229,6 @@
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
-            // Nach 10 Sekunden den Start-Button wieder anzeigen
             setTimeout(() => {
                 startButton.style.display = 'block';
             }, 5000);
@@ -252,11 +276,11 @@
             startButton.style.display = 'none';
             canvas.style.display = 'block';
             score = 0;
-            timeLeft = 60;
+            timeLeft = zeitParameter ? parseInt(zeitParameter) : 60;
             gameOver = false;
             gameOverDisplay.style.display = 'none';
             scoreDisplay.innerText = `Score: 0`;
-            timerDisplay.innerText = `Zeit: 60`;
+            timerDisplay.innerText = `Zeit: ${timeLeft}`;
             startTimer();
             updateGame();
         });
