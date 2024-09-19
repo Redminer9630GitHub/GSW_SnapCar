@@ -10,6 +10,11 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
         }
 
         h1 {
@@ -23,7 +28,7 @@
             background-color: #87CEEB;
         }
 
-        #score, #timer {
+        #score, #timer, #highscore {
             font-size: 24px;
             margin-top: 20px;
         }
@@ -43,7 +48,6 @@
             border: none;
             cursor: pointer;
             margin-top: 50px;
-            margin-left: 50%;
         }
 
         #startButton:hover {
@@ -57,6 +61,7 @@
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60</div>
+    <div id="highscore">Highscore: 0</div>
     <div id="gameOver"></div>
     <button id="startButton">Start</button>
 
@@ -65,33 +70,33 @@
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
         const timerDisplay = document.getElementById('timer');
+        const highscoreDisplay = document.getElementById('highscore');
         const gameOverDisplay = document.getElementById('gameOver');
         const startButton = document.getElementById('startButton');
         canvas.width = 800;
         canvas.height = 400;
 
         let score = 0;
+        let highscore = localStorage.getItem('highscore') || 0;  // Highscore aus localStorage laden
         let gameOver = false;
         let timeLeft = 60;
         let startDelay = 0;
 
-        // Funktion zum Extrahieren von URL-Parametern
+        highscoreDisplay.innerText = `Highscore: ${highscore}`;  // Highscore anzeigen
+
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.has(name) ? urlParams.get(name) : null;
         }
 
-        // Zeit und Startbutton-Verzögerung aus URL-Parametern holen
         const zeitParameter = getUrlParameter('zeit');
         const freeStartParameter = getUrlParameter('freeStart');
 
-        // Zeit-Parameter anwenden
         if (zeitParameter) {
             timeLeft = parseInt(zeitParameter);
             timerDisplay.innerText = `Zeit: ${timeLeft}`;
         }
 
-        // Verzögerung für den Start-Button anwenden
         if (freeStartParameter) {
             startDelay = parseInt(freeStartParameter);
             setTimeout(() => {
@@ -123,12 +128,11 @@
 
         let coins = [];
         let trees = [];
-        let lastSpawnY = -150;
+        let lastSpawnY = -200;  // Letzter Y-Spawn-Position, damit Abstände größer sind (Minimum 50px)
 
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
-            let y = -Math.random() * canvas.height;
-            if (y - lastSpawnY < 150) y = lastSpawnY - 150;
+            let y = Math.min(-50, lastSpawnY - 50 - Math.random() * canvas.height); // Abstand von mindestens 50px
             lastSpawnY = y;
             let coinImg = new Image();
             coinImg.src = 'coin.png';
@@ -144,8 +148,7 @@
 
         function createTree() {
             let lane = Math.floor(Math.random() * road.lanes);
-            let y = -Math.random() * canvas.height;
-            if (y - lastSpawnY < 150) y = lastSpawnY - 150;
+            let y = Math.min(-100, lastSpawnY - 50 - Math.random() * canvas.height); // Abstand von mindestens 50px
             lastSpawnY = y;
             let treeImg = new Image();
             treeImg.src = 'tree.png';
@@ -228,6 +231,12 @@
             gameOver = true;
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
+
+            if (score > highscore) {
+                highscore = score;
+                localStorage.setItem('highscore', highscore);  // Highscore speichern
+                highscoreDisplay.innerText = `Highscore: ${highscore}`;
+            }
 
             setTimeout(() => {
                 startButton.style.display = 'block';
