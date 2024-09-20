@@ -12,7 +12,7 @@
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             flex-direction: column;
             height: 100vh;
         }
@@ -31,13 +31,12 @@
 
         #score, #timer, #highscore {
             font-size: 24px;
-            margin-top: 5px;
+            margin: 5px;
         }
 
         #gameOver {
             display: none;
             font-size: 32px;
-            color: red;
         }
 
         #startButton, #hostControl {
@@ -64,6 +63,13 @@
         #hostControl:hover {
             background-color: #e68900;
         }
+        
+        .infoRow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -77,9 +83,11 @@
     </div>
 
     <canvas id="gameCanvas"></canvas>
-    <div id="score">Score: 0</div>
-    <div id="timer">Zeit: 60</div>
-    <div id="highscore">Highscore: 0</div>
+    <div class="infoRow">
+        <div id="score">Score: 0</div>
+        <div id="timer">Zeit: 60</div>
+        <div id="highscore">Highscore: 0</div>
+    </div>
     <div id="gameOver"></div>
     <button id="startButton">Spiel Freigeben</button>
     <button id="hostControl">Spiel Freigeben</button>
@@ -251,12 +259,14 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
-            gameOverDisplay.style.display = 'block';
-
             if (score >= 150) {
-                gameOverDisplay.innerText = `Gewonnen! Du hast 150 Punkte erreicht und einen Baum gepflanzt!`;
+                gameOverDisplay.innerText = `Gewonnen! Dein Score: ${score}`;
+                gameOverDisplay.style.color = 'green'; // Grün, wenn gewonnen
+            } else {
+                gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
+                gameOverDisplay.style.color = 'red'; // Rot, wenn verloren
             }
+            gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
                 highscore = score;
