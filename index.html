@@ -12,13 +12,20 @@
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             flex-direction: column;
             height: 100vh;
         }
 
-        h1 {
-            color: #333;
+        h1, p {
+            margin: 5px;
+            padding: 0;
+        }
+
+        #controlsInfo {
+            font-size: 18px;
+            color: #555;
+            margin: 10px 0;
         }
 
         canvas {
@@ -30,7 +37,7 @@
 
         #score, #timer, #highscore {
             font-size: 24px;
-            margin-top: 20px;
+            margin-top: 5px;
         }
 
         #gameOver {
@@ -47,23 +54,48 @@
             color: white;
             border: none;
             cursor: pointer;
-            margin-top: 50px;
+            margin-top: 20px;
         }
 
         #startButton:hover {
             background-color: #45a049;
         }
+
+        #hostControl {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #hostControl:hover {
+            background-color: #e68900;
+        }
+
     </style>
 </head>
 <body>
     <h1>Rennspiel</h1>
     <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
+
+    <div id="controlsInfo">
+        "A" oder "←" um nach links zu fahren und "D" oder "→" um nach rechts zu fahren.<br>
+        Erreiche 150 Punkte um einen Baum zu pflanzen.<br>
+        Drücke Leertaste, um das Spiel zu starten.
+    </div>
+
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <div id="timer">Zeit: 60</div>
     <div id="highscore">Highscore: 0</div>
     <div id="gameOver"></div>
     <button id="startButton">Start</button>
+    <button id="hostControl">Host-Steuerung aktivieren</button>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -73,6 +105,8 @@
         const highscoreDisplay = document.getElementById('highscore');
         const gameOverDisplay = document.getElementById('gameOver');
         const startButton = document.getElementById('startButton');
+        const hostControlButton = document.getElementById('hostControl');
+        const controlsInfo = document.getElementById('controlsInfo');
         canvas.width = 800;
         canvas.height = 400;
 
@@ -81,6 +115,7 @@
         let gameOver = false;
         let timeLeft = 60;
         let startDelay = 0;
+        let isHostActive = false; // Ob der Host die Maussteuerung nutzt
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;  // Highscore anzeigen
 
@@ -221,7 +256,7 @@
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
                     tree.y < car.y + car.height &&
-                    tree.y + car.height > car.y) {
+                    tree.y + tree.height > car.y) {
                     endGame();
                 }
             });
@@ -232,8 +267,8 @@
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
-            if (score > 200) {
-                gameOverDisplay.innerText = `Gewonnen! Dein Score: ${score}`;
+            if (score >= 150) {
+                gameOverDisplay.innerText = `Gewonnen! Du hast 150 Punkte erreicht und einen Baum gepflanzt!`;
             }
 
             if (score > highscore) {
@@ -276,22 +311,38 @@
             }, 1000);
         }
 
+        // Host und Gast Steuerung
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'D' && car.lane > 0) {
-                car.lane--;
-            }
-            if (event.key === 'ArrowLeft' && car.lane > 0) {
-                car.lane--;
-            }
-            if (event.key === 'A' && car.lane < road.lanes - 1) {
-                car.lane++;
-            }
-            if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
-                car.lane++;
+            if (!gameOver) {
+                if ((event.key === 'ArrowLeft' || event.key === 'a') && car.lane > 0) {
+                    car.lane--;
+                }
+                if ((event.key === 'ArrowRight' || event.key === 'd') && car.lane < road.lanes - 1) {
+                    car.lane++;
+                }
+                if (event.key === ' ' && startButton.style.display !== 'none') {
+                    startGame();
+                }
             }
         });
 
-        startButton.addEventListener('click', () => {
+        hostControlButton.addEventListener('click', () => {
+            isHostActive = true;
+            hostControlButton.innerText = "Host-Steuerung aktiv";
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            if (isHostActive && !gameOver) {
+                let relativeX = event.clientX - canvas.getBoundingClientRect().left;
+                let laneWidth = road.laneWidth;
+                let lane = Math.floor((relativeX - road.x) / laneWidth);
+                if (lane >= 0 && lane < road.lanes) {
+                    car.lane = lane;
+                }
+            }
+        });
+
+        function startGame() {
             startButton.style.display = 'none';
             canvas.style.display = 'block';
             score = 0;
@@ -300,9 +351,12 @@
             gameOverDisplay.style.display = 'none';
             scoreDisplay.innerText = `Score: 0`;
             timerDisplay.innerText = `Zeit: ${timeLeft}`;
+            controlsInfo.style.display = 'none'; // Anleitung verstecken
             startTimer();
             updateGame();
-        });
+        }
+
+        startButton.addEventListener('click', startGame);
     </script>
 </body>
 </html>
