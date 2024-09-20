@@ -101,7 +101,7 @@
         #startHint {
             font-size: 20px;
             color: white;
-            animation: pulse 1.7s infinite alternate;
+            animation: pulse 1.7s infinite;
         }
 
         @keyframes pulse {
@@ -112,6 +112,10 @@
                 color: black;
             }
         }
+
+        .h1-text {
+            font-size: 20;
+        }
     </style>
 </head>
 <body>
@@ -120,7 +124,7 @@
 
     <div id="controlsInfo">
         "A" oder "←" um nach links zu fahren und "D" oder "→" um nach rechts zu fahren.<br>
-        Erreiche <h1>150</h1> Punkte um einen <h1>Baum</h1> zu pflanzen.<br>
+        Erreiche <span class="h1-text>"150</span> Punkte um einen <span class="h1-text>Baum</span> zu pflanzen.<br>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -132,7 +136,7 @@
         <div id="highscore">Highscore: 0</div>
     </div>
     
-    <div id="startHint">Drücke <h1>Leertaste</h1> um das Spiel zu starten</div>
+    <div id="startHint">Drücke <span class="h1-text">Leertaste</span> um das Spiel zu starten</div>
     
     <div id="gameOver"></div>
     
