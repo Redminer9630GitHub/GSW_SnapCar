@@ -94,6 +94,24 @@
             font-size: 24px;
             margin: 0 15px;
         }
+
+        /* Linie zwischen den Info-Elementen */
+        .divider {
+            display: inline-block;
+            width: 5px;
+            height: 40px;
+            background-color: blue; /* Anfangs blau */
+            vertical-align: middle;
+        }
+
+        /* Spiel gestartet */
+        .active-border {
+            border-color: orange;
+        }
+
+        .active-divider {
+            background-color: orange;
+        }
     </style>
 </head>
 <body>
@@ -110,7 +128,9 @@
     <canvas id="gameCanvas"></canvas>
     <div id="infoWrapper">
         <div id="score">Score: 0</div>
+        <div class="divider"></div>
         <div id="timer">Zeit: 60</div>
+        <div class="divider"></div>
         <div id="highscore">Highscore: 0</div>
     </div>
     <div id="gameOver"></div>
@@ -385,6 +405,25 @@
         }
 
         startButton.addEventListener('click', startGame);
+
+        let gameStarted = false;
+
+        // Funktion, um die Farben zu ändern, wenn das Spiel startet
+        function startGame() {
+            const infoWrapper = document.getElementById('infoWrapper');
+            const dividers = document.querySelectorAll('.divider');
+
+            gameStarted = true;
+
+            // Ändere die Farbe von Blau zu Orange
+            infoWrapper.classList.add('active-border');
+            dividers.forEach(divider => {
+                divider.classList.add('active-divider');
+            });
+        }
+
+        // Beispiel: Simulation des Spielstarts nach 3 Sekunden
+        setTimeout(startGame, 3000);
     </script>
 </body>
 </html>
