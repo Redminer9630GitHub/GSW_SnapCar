@@ -221,7 +221,7 @@
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
                     tree.y < car.y + car.height &&
-                    tree.y + tree.height > car.y) {
+                    tree.y + car.height > car.y) {
                     endGame();
                 }
             });
@@ -231,10 +231,9 @@
             gameOver = true;
             gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
+
             if (score > 200) {
-                gameOverDisplay.innerText = `Gewonnnen! Dein Score: ${score}`;
-                if (score > highscore) {
-                    gameOverDisplay.innerText = `Gewonnen! Du hast den Highscore gecknakt! Dein Score: ${score}`;
+                gameOverDisplay.innerText = `Gewonnen! Dein Score: ${score}`;
             }
 
             if (score > highscore) {
@@ -278,8 +277,14 @@
         }
 
         document.addEventListener('keydown', (event) => {
+            if (event.key === 'D' && car.lane > 0) {
+                car.lane--;
+            }
             if (event.key === 'ArrowLeft' && car.lane > 0) {
                 car.lane--;
+            }
+            if (event.key === 'A' && car.lane < road.lanes - 1) {
+                car.lane++;
             }
             if (event.key === 'ArrowRight' && car.lane < road.lanes - 1) {
                 car.lane++;
