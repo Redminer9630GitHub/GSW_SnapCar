@@ -62,55 +62,55 @@
         #hostControl:hover {
             background-color: #e68900;
         }
-        
-        #startText {
-            font-size: 24px;
-            color: white;
-            animation: pulse 1.7s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                color: white;
-            }
-            50% {
-                color: black;
-            }
-            100% {
-                color: white;
-            }
-        }
-        
+           
         #infoWrapper {
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 10px;
-            border: 5px solid orange;
+            border: 5px solid blue; /* Anfangs blau */
             border-radius: 25px;
-            margin-top: 20px;
         }
 
         #infoWrapper > div {
-            display: inline-block;
             font-size: 24px;
             margin: 0 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        /* Linie zwischen den Info-Elementen */
+        /* Vertikale Linie (Divider) */
         .divider {
-            display: inline-block;
             width: 5px;
-            height: 40px;
+            height: 100%; /* Volle Höhe, um von oben bis zur Border zu reichen */
             background-color: blue; /* Anfangs blau */
-            vertical-align: middle;
+            margin: 0;
         }
 
-        /* Spiel gestartet */
+        /* Änderungen beim Start des Spiels */
         .active-border {
             border-color: orange;
         }
 
         .active-divider {
             background-color: orange;
+        }
+
+        /* Text-Animation für Leertaste */
+        #startHint {
+            font-size: 20px;
+            color: white;
+            animation: pulse 1.7s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                color: white;
+            }
+            to {
+                color: black;
+            }
         }
     </style>
 </head>
@@ -120,9 +120,7 @@
 
     <div id="controlsInfo">
         "A" oder "←" um nach links zu fahren und "D" oder "→" um nach rechts zu fahren.<br>
-        Erreiche 150 Punkte um einen Baum zu pflanzen.<br>
-        <br>
-        <div id="startText">Drücke Leertaste um das Spiel zu starten</div>
+        Erreiche <h1>150</h1> Punkte um einen <h1>Baum</h1> zu pflanzen.<br>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -133,6 +131,9 @@
         <div class="divider"></div>
         <div id="highscore">Highscore: 0</div>
     </div>
+    
+    <div id="startHint">Drücke <h1>Leertaste</h1> um das Spiel zu starten</div>
+    
     <div id="gameOver"></div>
     
     <script>
@@ -362,7 +363,7 @@
                 if ((event.key === 'ArrowRight' || event.key === 'd') && car.lane < road.lanes - 1) {
                     car.lane++;
                 }
-                if (event.key === ' ' && startButton.style.display !== 'none') {
+                if (event.key === 'Space') {
                     startGame();
                 }
             }
@@ -384,27 +385,31 @@
             }
         });
 
-        function startGame() {
-            startButton.style.display = 'none';
-            canvas.style.display = 'block';
-            score = 0;
-            timeLeft = zeitParameter ? parseInt(zeitParameter) : 60;
-            gameOver = false;
-            gameOverDisplay.style.display = 'none';
-            scoreDisplay.innerText = `Score: 0`;
-            timerDisplay.innerText = `Zeit: ${timeLeft}`;
-            controlsInfo.style.display = 'none'; // Anleitung verstecken
-            startTimer();
-            updateGame();
-
-            // Buttons umbenennen
-            startButton.innerText = "Spiel Aktiv";
-            hostControlButton.innerText = "Spiel Aktiv";
-        }
-
-        startButton.addEventListener('click', startGame);
-
         let gameStarted = false;
+
+        function startGame() {
+            if (gameStarted) return;  // Spiel ist bereits gestartet
+
+            const infoWrapper = document.getElementById('infoWrapper');
+            const dividers = document.querySelectorAll('.divider');
+            const startHint = document.getElementById('startHint');
+
+            gameStarted = true;
+
+            // Border und Divider auf Orange ändern
+            infoWrapper.classList.add('active-border');
+            dividers.forEach(divider => {
+                divider.classList.add('active-divider');
+            });
+
+            // Start-Hinweis ausblenden
+            startHint.style.display = 'none';
+
+            console.log("Spiel gestartet!");
+            // Hier kannst du deine Spiel-Logik hinzufügen
+        }
+        
+        startButton.addEventListener('click', startGame);
 
         // Funktion, um die Farben zu ändern, wenn das Spiel startet
         function startGame() {
@@ -422,6 +427,7 @@
 
         // Beispiel: Simulation des Spielstarts nach 3 Sekunden
         setTimeout(startGame, 3000);
+        
     </script>
 </body>
 </html>
