@@ -9,7 +9,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f0f0f0;
+            background-color: #000000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -63,13 +63,6 @@
             background-color: #e68900;
         }
         
-        .infoRow {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
         #startText {
             font-size: 24px;
             color: white;
@@ -87,6 +80,20 @@
                 color: white;
             }
         }
+        
+        #infoWrapper {
+            display: inline-block;
+            padding: 10px;
+            border: 5px solid orange;
+            border-radius: 25px;
+            margin-top: 20px;
+        }
+
+        #infoWrapper > div {
+            display: inline-block;
+            font-size: 24px;
+            margin: 0 15px;
+        }
     </style>
 </head>
 <body>
@@ -101,7 +108,7 @@
     </div>
 
     <canvas id="gameCanvas"></canvas>
-    <div class="infoRow">
+    <div id="infoWrapper">
         <div id="score">Score: 0</div>
         <div id="timer">Zeit: 60</div>
         <div id="highscore">Highscore: 0</div>
