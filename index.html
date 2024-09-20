@@ -69,6 +69,24 @@
             align-items: center;
             margin-top: 10px;
         }
+        
+        #startText {
+            font-size: 24px;
+            color: white;
+            animation: pulse 1.7s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                color: white;
+            }
+            50% {
+                color: black;
+            }
+            100% {
+                color: white;
+            }
+        }
     </style>
 </head>
 <body>
@@ -78,7 +96,8 @@
     <div id="controlsInfo">
         "A" oder "←" um nach links zu fahren und "D" oder "→" um nach rechts zu fahren.<br>
         Erreiche 150 Punkte um einen Baum zu pflanzen.<br>
-        Drücke Leertaste, um das Spiel zu starten.
+        <br>
+        <div id="startText">Drücke Leertaste um das Spiel zu starten</div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
