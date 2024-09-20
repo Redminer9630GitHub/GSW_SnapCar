@@ -14,7 +14,6 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 100vh;
         }
 
         h1, p, #controlsInfo {
@@ -90,7 +89,7 @@
     </div>
     <div id="gameOver"></div>
     <button id="startButton">Spiel Freigeben</button>
-    <button id="hostControl">Spiel Freigeben</button>
+    <button id="hostControl">Spiel Nicht Freigeben</button>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -275,7 +274,7 @@
             }
 
             startButton.innerText = "Spiel Freigeben"; // Button zurücksetzen
-            hostControlButton.innerText = "Spiel Freigeben"; // Button zurücksetzen
+            hostControlButton.innerText = "Spiel Nicht Freigeben"; // Button zurücksetzen
             setTimeout(() => {
                 startButton.style.display = 'block';
             }, 5000);
