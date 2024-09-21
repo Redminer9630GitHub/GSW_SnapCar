@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -17,9 +17,10 @@
             height: 100vh;
         }
 
-        h1, p, #controlsInfo {
-            margin: 5px;
-            padding: 0;
+        h1 {
+            font-size: 24px;
+            color: blue;
+            margin: 10px 0;
         }
 
         canvas {
@@ -37,7 +38,7 @@
             display: none;
             font-size: 32px;
             position: absolute;
-            top: 10%;
+            top: 15%; /* Direkt über dem Canvas */
             left: 50%;
             transform: translateX(-50%);
             color: red;
@@ -45,6 +46,24 @@
             padding: 10px 20px;
             border-radius: 10px;
             z-index: 10;
+        }
+
+        #startHint {
+            font-size: 20px;
+            color: white;
+            animation: pulse 1.7s infinite;
+            display: block;
+            margin-top: 20px;
+            position: absolute;
+            top: 80%; /* Position anpassen */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes pulse {
+            0% { color: white; }
+            50% { color: black; }
+            100% { color: white; }
         }
 
         #startButton {
@@ -62,59 +81,9 @@
             background-color: #45a049;
         }
 
-        #infoWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            border: 5px solid blue;
-            border-radius: 25px;
-        }
-
-        #infoWrapper > div {
-            font-size: 24px;
-            margin: 0 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .divider {
-            width: 5px;
-            height: 100%;
-            background-color: blue;
-            margin: 0;
-        }
-
-        .active-border {
-            border-color: orange;
-        }
-
-        .active-divider {
-            background-color: orange;
-        }
-
-        #startHint {
-            font-size: 20px;
-            color: white;
-            animation: pulse 1.7s infinite;
-            display: block;
-            margin-top: 20px;
-        }
-
-        @keyframes pulse {
-            0% { color: white; }
-            50% { color: black; }
-            100% { color: white; }
-        }
-
-        .h1-text {
-            font-size: 24px;
-            color: blue;
-        }
-
-        #timer {
-            transition: color 1s ease;
+        #controlsInfo {
+            margin: 5px;
+            padding: 0;
         }
     </style>
 </head>
@@ -128,17 +97,12 @@
     </div>
 
     <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div id="infoWrapper">
-        <div id="score">Score: 0</div>
-        <div class="divider"></div>
-        <div id="timer">Zeit: 60</div>
-        <div class="divider"></div>
-        <div id="highscore">Highscore: 0</div>
-    </div>
-    <br>
-    <div id="startHint">Drücke <span class="h1-text">Leertaste</span> um das Spiel zu starten</div>
+    <div id="score">Score: 0</div>
+    <div id="timer">Zeit: 60</div>
+    <div id="highscore">Highscore: 0</div>
     
     <div id="gameOver"></div>
+    <div id="startHint">Drücke <span class="h1-text">Leertaste</span> um das Spiel zu starten</div>
 
     <button id="startButton">Spiel starten</button>
     
