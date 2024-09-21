@@ -37,16 +37,13 @@
             font-size: 32px;
         }
 
-        #startButton, #hostControl {
+        #startButton {
             font-size: 24px;
             padding: 10px 20px;
             color: white;
             border: none;
             cursor: pointer;
             margin-top: 20px;
-        }
-
-        #startButton {
             background-color: #4CAF50;
         }
 
@@ -54,20 +51,12 @@
             background-color: #45a049;
         }
 
-        #hostControl {
-            background-color: #ff9800;
-        }
-
-        #hostControl:hover {
-            background-color: #e68900;
-        }
-           
         #infoWrapper {
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 10px;
-            border: 5px solid blue; /* Anfangs blau */
+            border: 5px solid blue;
             border-radius: 25px;
         }
 
@@ -79,15 +68,13 @@
             justify-content: center;
         }
 
-        /* Vertikale Linie (Divider) */
         .divider {
             width: 5px;
-            height: 100%; /* Volle Höhe, um von oben bis zur Border zu reichen */
-            background-color: blue; /* Anfangs blau */
+            height: 100%;
+            background-color: blue;
             margin: 0;
         }
 
-        /* Änderungen beim Start des Spiels */
         .active-border {
             border-color: orange;
         }
@@ -96,7 +83,6 @@
             background-color: orange;
         }
 
-        /* Text-Animation für Leertaste */
         #startHint {
             font-size: 20px;
             color: white;
@@ -104,19 +90,15 @@
         }
 
         @keyframes pulse {
-            from {
-                color: white;
-            }
-            to {
-                color: black;
-            }
+            from { color: white; }
+            to { color: black; }
         }
 
         .h1-text {
             font-size: 24;
+            color: blue;
         }
 
-        /* Übergang für den Timer-Text */
         #timer {
             transition: color 1s ease;
         }
@@ -129,7 +111,6 @@
     <div id="controlsInfo">
         "A" oder "←" um nach links zu fahren und "D" oder "→" um nach rechts zu fahren.<br>
         Erreiche <span class="h1-text">150</span> Punkte um einen <span class="h1-text">Baum</span> zu pflanzen.<br>
-        <br>
     </div>
 
     <canvas id="gameCanvas" width="800" height="400"></canvas>
@@ -164,6 +145,14 @@
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
+        // Bilder laden
+        const carImage = new Image();
+        carImage.src = 'car.png'; // Pfad zu deinem Auto-Bild
+        const coinImage = new Image();
+        coinImage.src = 'coin.png'; // Pfad zu deinem Münz-Bild
+        const treeImage = new Image();
+        treeImage.src = 'tree.png'; // Pfad zu deinem Baum-Bild
+
         let car = {
             x: canvas.width / 2 - 25,
             y: canvas.height - 80,
@@ -186,7 +175,7 @@
         let gameStarted = false;
 
         function startGame() {
-            if (gameStarted) return;  // Spiel ist bereits gestartet
+            if (gameStarted) return;
             gameStarted = true;
             startHint.style.display = 'none';
             timeLeft = 60;
@@ -218,8 +207,7 @@
 
         function drawCar() {
             car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
-            ctx.fillStyle = 'red';
-            ctx.fillRect(car.x, car.y, car.width, car.height);
+            ctx.drawImage(carImage, car.x, car.y, car.width, car.height);  // Auto als Bild zeichnen
         }
 
         function drawRoad() {
@@ -263,16 +251,17 @@
                     score += 10;
                     scoreDisplay.innerText = `Score: ${score}`;
                 }
+                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);  // Münze als Bild zeichnen
             });
         }
 
         function createTree() {
             let lane = Math.floor(Math.random() * road.lanes);
             let tree = {
-                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 30,
-                y: -100,
-                width: 60,
-                height: 100,
+                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 20,
+                y: -40,
+                width: 40,
+                height: 40,
             };
             trees.push(tree);
         }
@@ -283,6 +272,8 @@
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
+                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);  // Baum als Bild zeichnen
+
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
                     tree.y < car.y + car.height &&
@@ -335,10 +326,10 @@
             if (event.code === 'Space' || event.code === ' ' && !gameStarted) {
                 startGame();
             }
-            if (event.code === 'KeyA' || event.code === 'ArrowLeft') {
+            if (event.code === 'A' || event.code === 'KeyA' || event.code === 'ArrowLeft') {
                 car.lane = Math.max(0, car.lane - 1);
             }
-            if (event.code === 'KeyD' || event.code === 'ArrowRight') {
+            if (event.code === 'D' || event.code === 'KeyD' || event.code === 'ArrowRight') {
                 car.lane = Math.min(road.lanes - 1, car.lane + 1);
             }
         });
