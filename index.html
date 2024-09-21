@@ -38,7 +38,7 @@
             display: none;
             font-size: 32px;
             position: absolute;
-            top: 15%; /* Direkt über dem Canvas */
+            top: 15%;
             left: 50%;
             transform: translateX(-50%);
             color: red;
@@ -55,7 +55,7 @@
             display: block;
             margin-top: 20px;
             position: absolute;
-            top: 80%; /* Position anpassen */
+            top: 80%;
             left: 50%;
             transform: translateX(-50%);
         }
@@ -84,6 +84,19 @@
         #controlsInfo {
             margin: 5px;
             padding: 0;
+        }
+
+        .divider {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: blue;
+        }
+
+        .lane {
+            position: absolute;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -123,13 +136,12 @@
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
-        // Bilder laden
         const carImage = new Image();
-        carImage.src = 'car.png'; // Pfad zu deinem Auto-Bild
+        carImage.src = 'car.png';
         const coinImage = new Image();
-        coinImage.src = 'coin.png'; // Pfad zu deinem Münz-Bild
+        coinImage.src = 'coin.png';
         const treeImage = new Image();
-        treeImage.src = 'tree.png'; // Pfad zu deinem Baum-Bild
+        treeImage.src = 'tree.png';
 
         let car = {
             x: canvas.width / 2 - 25,
@@ -178,15 +190,15 @@
             updateCoins();
             updateTrees();
 
-            if (Math.random() < 0.02) createCoin();
-            if (Math.random() < 0.02) createTree();  // Baum-Spawnrate reduziert
+            if (Math.random() < 0.01) createCoin();  // Spawnrate für Münzen verringert
+            if (Math.random() < 0.01) createTree();  // Spawnrate für Bäume verringert
 
             requestAnimationFrame(updateGame);
         }
 
         function drawCar() {
             car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
-            ctx.drawImage(carImage, car.x, car.y, car.width, car.height);  // Auto als Bild zeichnen
+            ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
         }
 
         function drawRoad() {
@@ -195,12 +207,14 @@
             ctx.strokeStyle = 'white';
             ctx.setLineDash([20, 15]);
             ctx.lineWidth = 5;
-            ctx.beginPath();
+
+            // Divider zeichnen
             for (let i = 1; i < road.lanes; i++) {
+                ctx.beginPath();
                 ctx.moveTo(road.x + i * road.laneWidth, 0);
                 ctx.lineTo(road.x + i * road.laneWidth, road.height);
+                ctx.stroke();
             }
-            ctx.stroke();
         }
 
         function createCoin() {
@@ -231,12 +245,11 @@
                     coin.collected = true;
                     coins.splice(coins.indexOf(coin), 1);
                 }
-                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);  // Münze als Bild zeichnen
+                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);
             });
         }
 
         function createTree() {
-            // Verhindern, dass in allen Spuren gleichzeitig Bäume erscheinen
             let lane = Math.floor(Math.random() * road.lanes);
             let tree = {
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 20,
@@ -253,7 +266,7 @@
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
-                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);  // Baum als Bild zeichnen
+                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
 
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
@@ -268,7 +281,7 @@
             const timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
-                    if (!gameOver) endGame();
+                    endGame();
                 } else {
                     timeLeft--;
                     timerDisplay.innerText = `Zeit: ${timeLeft}`;
@@ -299,7 +312,7 @@
             }
 
             setTimeout(() => {
-                startHint.style.display = 'block';  // Pulsierender Start-Hinweis nach Game Over
+                startHint.style.display = 'block';
             }, 3000);
         }
 
@@ -316,6 +329,41 @@
         });
 
         startButton.addEventListener('click', startGame);
+
+        let gameRunning = false;
+
+        // Funktion um die Farbe der Dividers zu ändern
+        function updateDividerColor() {
+            const dividers = document.querySelectorAll('.divider');
+            dividers.forEach(divider => {
+                divider.style.backgroundColor = gameRunning ? 'orange' : 'blue';
+            });
+        }
+
+        // Stoppen des Spiels und Öffnen des Passwort-Menüs
+        function openPasswordMenu() {
+            gameRunning = false;
+            updateDividerColor();
+            // Hier kannst du das Passwort-Eingabefeld einfügen
+            const password = prompt("Bitte Passwort eingeben:");
+            if (password === "malware123") {
+                alert("Zugriff gewährt!"); // Hier kannst du das Menü einfügen
+                // Interaktion wiederherstellen
+                gameRunning = true;
+                updateDividerColor();
+                requestAnimationFrame(updateGame);
+            } else {
+                alert("Zugriff verweigert!");
+            }
+        }
+
+        // Event Listener für Shift + H
+        document.addEventListener('keydown', (event) => {
+            if (event.shiftKey && event.code === 'KeyH') {
+                openPasswordMenu();
+            }
+            // Rest der Steuerung ...
+        });
     </script>
 </body>
 </html>
