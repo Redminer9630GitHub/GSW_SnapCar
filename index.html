@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -14,6 +14,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            height: 100vh;
         }
 
         h1, p, #controlsInfo {
@@ -35,6 +36,15 @@
         #gameOver {
             display: none;
             font-size: 32px;
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: red;
+            background-color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            z-index: 10;
         }
 
         #startButton {
@@ -45,6 +55,7 @@
             cursor: pointer;
             margin-top: 20px;
             background-color: #4CAF50;
+            display: none;
         }
 
         #startButton:hover {
@@ -87,15 +98,18 @@
             font-size: 20px;
             color: white;
             animation: pulse 1.7s infinite;
+            display: block;
+            margin-top: 20px;
         }
 
         @keyframes pulse {
-            from { color: white; }
-            to { color: black; }
+            0% { color: white; }
+            50% { color: black; }
+            100% { color: white; }
         }
 
         .h1-text {
-            font-size: 24;
+            font-size: 24px;
             color: blue;
         }
 
@@ -126,7 +140,7 @@
     
     <div id="gameOver"></div>
 
-    <button id="startButton" style="display:none">Spiel starten</button>
+    <button id="startButton">Spiel starten</button>
     
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -178,6 +192,7 @@
             if (gameStarted) return;
             gameStarted = true;
             startHint.style.display = 'none';
+            startButton.style.display = 'none';
             timeLeft = 60;
             score = 0;
             gameOver = false;
@@ -200,7 +215,7 @@
             updateTrees();
 
             if (Math.random() < 0.02) createCoin();
-            if (Math.random() < 0.01) createTree();
+            if (Math.random() < 0.02) createTree();  // Baum-Spawnrate reduziert
 
             requestAnimationFrame(updateGame);
         }
@@ -247,15 +262,17 @@
                     coin.x + coin.width > car.x &&
                     coin.y < car.y + car.height &&
                     coin.y + coin.height > car.y) {
-                    coin.collected = true;
                     score += 10;
                     scoreDisplay.innerText = `Score: ${score}`;
+                    coin.collected = true;
+                    coins.splice(coins.indexOf(coin), 1);
                 }
                 ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);  // Münze als Bild zeichnen
             });
         }
 
         function createTree() {
+            // Verhindern, dass in allen Spuren gleichzeitig Bäume erscheinen
             let lane = Math.floor(Math.random() * road.lanes);
             let tree = {
                 x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 20,
@@ -318,18 +335,18 @@
             }
 
             setTimeout(() => {
-                startButton.style.display = 'block';
+                startHint.style.display = 'block';  // Pulsierender Start-Hinweis nach Game Over
             }, 3000);
         }
 
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' || event.code === ' ' && !gameStarted) {
+            if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }
-            if (event.code === 'A' || event.code === 'KeyA' || event.code === 'ArrowLeft') {
+            if (event.code === 'KeyA' || event.code === 'ArrowLeft') {
                 car.lane = Math.max(0, car.lane - 1);
             }
-            if (event.code === 'D' || event.code === 'KeyD' || event.code === 'ArrowRight') {
+            if (event.code === 'KeyD' || event.code === 'ArrowRight') {
                 car.lane = Math.min(road.lanes - 1, car.lane + 1);
             }
         });
