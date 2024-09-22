@@ -122,14 +122,11 @@
     </style>
 </head>
 <body>
-    <h1>Rennspiel</h1>
     <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
-
     <div id="controlsInfo">
         "A" oder "←" um nach links zu fahren und "D" oder "→" um nach rechts zu fahren.<br>
         Erreiche <span class="h1-text">150</span> Punkte um einen <span class="h1-text">Baum</span> zu pflanzen.<br>
     </div>
-
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="infoWrapper">
         <div id="score">Score: 0</div>
@@ -138,7 +135,6 @@
         <div class="divider"></div>
         <div id="highscore">Highscore: 0</div>
     </div>
-    
     <div id="gameOver"></div>
     <div id="startHint">Drücke <span class="h1-text">Leertaste</span> um das Spiel zu starten</div>
 
@@ -215,7 +211,7 @@
             updateCoins();
             updateTrees();
 
-            if (Math.random() < 0.01) createCoin();  // Spawnrate für Münzen verringert
+            if (Math.random() < 0.05) createCoin();  // Spawnrate für Münzen verringert
             if (Math.random() < 0.01) createTree();  // Spawnrate für Bäume verringert
 
             requestAnimationFrame(updateGame);
@@ -387,8 +383,71 @@
             if (event.shiftKey && event.code === 'KeyH') {
                 openPasswordMenu();
             }
-            // Rest der Steuerung ...
         });
+        
+        function isCollision(sprite1, sprite2) {
+            return (
+                sprite1.x < sprite2.x + sprite2.width &&
+                sprite1.x + sprite1.width > sprite2.x &&
+                sprite1.y < sprite2.y + sprite2.height &&
+                sprite1.y + sprite1.height > sprite2.y
+            );
+        }
+
+        // Entferne Sprite, wenn es mit einem anderen kollidiert
+        function removeOverlappingSprites() {    
+            // Check for Tree-Tree and Coin-Coin collisions
+            for (let i = 0; i < trees.length; i++) {
+                for (let j = i + 1; j < trees.length; j++) {
+                    if (isCollision(trees[i], trees[j])) {
+                        trees.splice(j, 1); // Entferne einen der beiden Bäume
+                        j--; // Array-Index korrigieren, da ein Element entfernt wurde
+                    }
+                }
+            }
+
+            for (let i = 0; i < coins.length; i++) {
+                for (let j = i + 1; j < coins.length; j++) {
+                    if (isCollision(coins[i], coins[j])) {
+                        coins.splice(j, 1); // Entferne eine der Münzen
+                        j--; // Array-Index korrigieren
+                    }
+                }
+            }
+
+            // Check for Tree-Coin collisions
+            for (let i = 0; i < trees.length; i++) {
+                for (let j = 0; j < coins.length; j++) {
+                    if (isCollision(trees[i], coins[j])) {
+                        trees.splice(i, 1); // Entferne den Baum
+                        i--; // Array-Index korrigieren
+                        break; // Breche ab, da ein Baum entfernt wurde
+                    }
+                }        
+            }
+        }
+
+        // Rufe diese Funktion nach dem Erstellen von neuen Sprites auf
+        function updateGame() {
+            if (gameOver) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawRoad();
+            drawCar();
+            drawCoins();
+            drawTrees();
+    
+             // Überprüfe auf überlappende Sprites
+            removeOverlappingSprites();
+
+            updateCoins();
+            updateTrees();
+
+            if (Math.random() < 0.02) createCoin();
+            if (Math.random() < 0.01) createTree();        
+
+            requestAnimationFrame(updateGame);
+        }
     </script>
 </body>
 </html>
