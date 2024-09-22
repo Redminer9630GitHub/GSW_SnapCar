@@ -344,7 +344,7 @@
 
         function endGame() {
             gameOver = true;
-            let basePrice = 100; // Grundpreis
+            let basePrice = 0.99; // Grundpreis
             let discount = 0; // Rabatt
 
             if (score >= 300) {
@@ -360,7 +360,7 @@
             if (score >= 150) {    
                 gameOverDisplay.innerText = `Du hast einen Baum gepflanzt! Eine Spende von: ${price}€`;
             } else {
-                gameOverDisplay.innerText = `Game Over! Dein Score: ${score} \n Preis: ${price}€ (nicht genügend Punkte für einen Baum)`;
+                gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
             }
     
             gameOverDisplay.style.display = 'block';
