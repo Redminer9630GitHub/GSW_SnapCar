@@ -17,6 +17,12 @@
             height: 100vh;
         }
 
+        h1 {
+            font-size: 24px;
+            color: blue;
+            margin: 10px 0;
+        }
+
         canvas {
             margin: 20px auto;
             border: 2px solid #333;
@@ -47,7 +53,7 @@
             color: white;
             animation: pulse 1.7s infinite;
             display: block;
-            margin-top: 8px;
+            margin-top: 20px;
             position: absolute;
             top: 80%;
             left: 50%;
@@ -205,7 +211,7 @@
             updateCoins();
             updateTrees();
 
-            if (Math.random() < 0.05) createCoin();  // Spawnrate für Münzen verringert
+            if (Math.random() < 0.01) createCoin();  // Spawnrate für Münzen verringert
             if (Math.random() < 0.01) createTree();  // Spawnrate für Bäume verringert
 
             requestAnimationFrame(updateGame);
@@ -362,7 +368,8 @@
             // Hier kannst du das Passwort-Eingabefeld einfügen
             const password = prompt("Bitte Passwort eingeben:");
             if (password === "malware123") {
-                alert("Zugriff gewährt!");
+                alert("Zugriff gewährt!"); // Hier kannst du das Menü einfügen
+                // Interaktion wiederherstellen
                 gameRunning = true;
                 updateDividerColor();
                 requestAnimationFrame(updateGame);
@@ -376,75 +383,8 @@
             if (event.shiftKey && event.code === 'KeyH') {
                 openPasswordMenu();
             }
+            // Rest der Steuerung ...
         });
-        
-        function isCollision(sprite1, sprite2) {
-            return (
-                sprite1.x < sprite2.x + sprite2.width &&
-                sprite1.x + sprite1.width > sprite2.x &&
-                sprite1.y < sprite2.y + sprite2.height &&
-                sprite1.y + sprite1.height > sprite2.y
-            );
-        }
-
-        // Entferne Sprite, wenn es mit einem anderen kollidiert
-        function removeOverlappingSprites() {
-            // Check for Tree-Tree collisions
-            for (let i = 0; i < trees.length; i++) {
-                for (let j = i + 1; j < trees.length; j++) {
-                    if (isCollision(trees[i], trees[j])) {
-                        // Nur löschen, wenn die Objekte sich tatsächlich überlappen
-                        trees.splice(j, 1);
-                        j--;
-                    }
-                }
-            }
-
-            // Check for Coin-Coin collisions
-            for (let i = 0; i < coins.length; i++) {
-                for (let j = i + 1; j < coins.length; j++) {
-                    if (isCollision(coins[i], coins[j])) {
-                        coins.splice(j, 1);
-                        j--;
-                    }
-                }
-            }
-
-            // Check for Tree-Coin collisions    
-            for (let i = 0; i < trees.length; i++) {
-                for (let j = 0; j < coins.length; j++) {
-                    if (isCollision(trees[i], coins[j])) {
-                        // Lösche den Baum, nicht die Münze
-                        trees.splice(i, 1);
-                        i--;
-                        break;
-                    }
-                }
-            }
-        }
-
-
-        // Rufe diese Funktion nach dem Erstellen von neuen Sprites auf
-        function updateGame() {
-            if (gameOver) return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawRoad();
-            drawCar();
-            drawCoins();
-            drawTrees();
-    
-             // Überprüfe auf überlappende Sprites
-            removeOverlappingSprites();
-
-            updateCoins();
-            updateTrees();
-
-            if (Math.random() < 0.02) createCoin();
-            if (Math.random() < 0.01) createTree();        
-
-            requestAnimationFrame(updateGame);
-        }
     </script>
 </body>
 </html>
