@@ -86,17 +86,38 @@
             padding: 0;
         }
 
+        /* Vertikale Linie (Divider) */
         .divider {
-            position: absolute;
-            width: 2px;
-            height: 100%;
-            background-color: blue;
+            width: 5px;
+            height: 100%; /* Volle Höhe, um von oben bis zur Border zu reichen */
+            background-color: blue; /* Anfangs blau */
+            margin: 0;
         }
 
-        .lane {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        /* Änderungen beim Start des Spiels */
+        .active-border {
+            border-color: orange;
+        }
+
+        .active-divider {
+            background-color: orange;
+        }
+        
+        #infoWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border: 5px solid blue; /* Anfangs blau */
+            border-radius: 25px;
+        }
+
+        #infoWrapper > div {
+            font-size: 24px;
+            margin: 0 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
     </style>
 </head>
@@ -110,9 +131,13 @@
     </div>
 
     <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div id="score">Score: 0</div>
-    <div id="timer">Zeit: 60</div>
-    <div id="highscore">Highscore: 0</div>
+    <div id="infoWrapper">
+        <div id="score">Score: 0</div>
+        <div class="divider"></div>
+        <div id="timer">Zeit: 60</div>
+        <div class="divider"></div>
+        <div id="highscore">Highscore: 0</div>
+    </div>
     
     <div id="gameOver"></div>
     <div id="startHint">Drücke <span class="h1-text">Leertaste</span> um das Spiel zu starten</div>
