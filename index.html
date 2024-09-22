@@ -110,12 +110,14 @@
             border-radius: 25px;
         }
 
-        #infoWrapper > div {
-            font-size: 24px;
-            margin: 0 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        #zebraCrossing {
+            height: 30px;
+            background-color: white;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            z-index: 5;
         }
     </style>
 </head>
@@ -136,6 +138,7 @@
     </div>
     <div id="startHint">Drücke Leertaste um das Spiel zu starten</div>
     <div id="gameOver"></div>
+    <div id="zebraCrossing"></div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -144,6 +147,7 @@
         const highscoreDisplay = document.getElementById('highscore');
         const gameOverDisplay = document.getElementById('gameOver');
         const startHint = document.getElementById('startHint');
+        const zebraCrossing = document.getElementById('zebraCrossing');
         
         let score = 0;
         let highscore = localStorage.getItem('highscore') || 0;
@@ -196,6 +200,7 @@
             coins = [];
             trees = [];
             dividers = [];
+            zebraCrossing.style.top = '0px'; // Zebrastreifen auf Startposition setzen
             requestAnimationFrame(updateGame);
         }
 
@@ -204,10 +209,13 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
-            drawDividers(); // Dividers unter dem Auto zeichnen
+            drawDividers();
             drawCar();
             updateCoins();
             updateTrees();
+
+            // Zebrastreifen bewegen
+            zebraCrossing.style.top = (parseInt(zebraCrossing.style.top) + car.speed) + 'px';
 
             if (Math.random() < 0.01) createCoin();
             if (Math.random() < 0.01) createTree();
@@ -285,8 +293,7 @@
                     coin.y + coin.height > car.y) {
                     score += 10;
                     scoreDisplay.innerText = `Score: ${score}`;
-                    coin.collected = true;
-                    coins.splice(coins.indexOf(coin), 1);
+                    coin.collected = true; // Münze als eingesammelt markieren
                 }
                 ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);
             });
@@ -326,7 +333,7 @@
         }
 
         function startTimer() {
-            if (timer) clearInterval(timer);  // Bestehenden Timer löschen, falls vorhanden
+            if (timer) clearInterval(timer);
             timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
@@ -343,7 +350,7 @@
             if (timeLeft > 30) {
                 timerDisplay.style.color = 'green';
             } else if (timeLeft > 10) {
-                timerDisplay.style.transition = 'color 1s ease';  // Übergangseffekt
+                timerDisplay.style.transition = 'color 1s ease';
                 timerDisplay.style.color = 'orange';
             } else {
                 timerDisplay.style.transition = 'color 1s ease';
@@ -353,7 +360,7 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= 150 ? `Gewonnen! Du hast einen Baum gepflanzt! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.innerText = score >= 150 ? `Du hast einen Baum gepflanzt! Eine Spende von: ${discount}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
