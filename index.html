@@ -180,6 +180,7 @@
 
         let coins = [];
         let trees = [];
+        let dividers = [];
         let gameStarted = false;
 
         function startGame() {
@@ -195,6 +196,7 @@
             gameOverDisplay.style.display = 'none';
             coins = [];
             trees = [];
+            dividers = [];  // Reset Dividers
             requestAnimationFrame(updateGame);
         }
 
@@ -206,6 +208,7 @@
             drawCar();
             updateCoins();
             updateTrees();
+            updateDividers();  // Dividers aktualisieren
 
             if (Math.random() < 0.01) createCoin();  // Spawnrate für Münzen verringert
             if (Math.random() < 0.01) createTree();  // Spawnrate für Bäume verringert
@@ -214,26 +217,45 @@
         }
 
         function drawCar() {
-            car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
+            let targetX = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
+            car.x += (targetX - car.x) * 0.1;  // Weiche Bewegung zur Zielposition
             ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
         }
 
         function drawRoad() {
             ctx.fillStyle = 'gray';
             ctx.fillRect(road.x, 0, road.width, road.height);
-            ctx.strokeStyle = 'white';
-            ctx.setLineDash([20, 15]);
-            ctx.lineWidth = 5;
+        }
 
-            // Divider zeichnen
+        function createDivider() {
             for (let i = 1; i < road.lanes; i++) {
-                ctx.beginPath();
-                ctx.moveTo(road.x + i * road.laneWidth, 0);
-                ctx.lineTo(road.x + i * road.laneWidth, road.height);
-                ctx.stroke();
+                let divider = {
+                    x: road.x + i * road.laneWidth,
+                    y: -30,
+                    width: 5,
+                    height: 30,
+                    speed: car.speed
+                };
+                dividers.push(divider);
             }
         }
-        
+
+        function updateDividers() {
+            if (dividers.length === 0 || dividers[dividers.length - 1].y > 50) {
+                createDivider();
+            }
+
+            dividers.forEach(divider => {
+                divider.y += divider.speed;
+                if (divider.y > canvas.height) {
+                    dividers.splice(dividers.indexOf(divider), 1);
+                } else {
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(divider.x, divider.y, divider.width, divider.height);
+                }
+            });
+        }
+
         function createCoin() {
             let lane = Math.floor(Math.random() * road.lanes);
             let coin = {
@@ -311,9 +333,11 @@
         function updateTimerColor() {
             if (timeLeft > 30) {
                 timerDisplay.style.color = 'green';
-            } else if (timeLeft > 0) {
+            } else if (timeLeft > 10) {
+                timerDisplay.style.transition = 'color 1s ease';  // Übergangseffekt
                 timerDisplay.style.color = 'orange';
             } else {
+                timerDisplay.style.transition = 'color 1s ease';
                 timerDisplay.style.color = 'red';
             }
         }
@@ -347,39 +371,6 @@
         });
 
         startButton.addEventListener('click', startGame);
-
-        // Funktion um die Farbe der Dividers zu ändern
-        function updateDividerColor() {
-            const dividers = document.querySelectorAll('.divider');
-            dividers.forEach(divider => {
-                divider.style.backgroundColor = gameRunning ? 'orange' : 'blue';
-            });
-        }
-
-        // Stoppen des Spiels und Öffnen des Passwort-Menüs
-        function openPasswordMenu() {
-            gameRunning = false;
-            updateDividerColor();
-            // Hier kannst du das Passwort-Eingabefeld einfügen
-            const password = prompt("Bitte Passwort eingeben:");
-            if (password === "malware123") {
-                alert("Zugriff gewährt!"); // Hier kannst du das Menü einfügen
-                // Interaktion wiederherstellen
-                gameRunning = true;
-                updateDividerColor();
-                requestAnimationFrame(updateGame);
-            } else {
-                alert("Zugriff verweigert!");
-            }
-        }
-
-        // Event Listener für Shift + H
-        document.addEventListener('keydown', (event) => {
-            if (event.shiftKey && event.code === 'KeyH') {
-                openPasswordMenu();
-            }
-            // Rest der Steuerung ...
-        });
     </script>
 </body>
 </html>
