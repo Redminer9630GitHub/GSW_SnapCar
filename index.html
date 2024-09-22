@@ -186,7 +186,6 @@
             if (gameStarted) return;
             gameStarted = true;
             startHint.style.display = 'none';
-            startButton.style.display = 'none';
             timeLeft = 60;
             score = 0;
             gameOver = false;
@@ -196,7 +195,8 @@
             gameOverDisplay.style.display = 'none';
             coins = [];
             trees = [];
-            setInterval(spawnRandomTemplate, templateSpawnInterval);
+            if (templateInterval) clearInterval(templateInterval);
+            templateInterval = setInterval(spawnRandomTemplate, templateSpawnInterval);
             requestAnimationFrame(updateGame);
         }
 
