@@ -202,9 +202,6 @@
             updateCoins();
             updateTrees();
 
-            // Zebrastreifen bewegen
-            zebraCrossing.style.top = (parseInt(zebraCrossing.style.top) + car.speed) + 'px';
-
             if (Math.random() < 0.01) createCoin();
             if (Math.random() < 0.01) createTree();
 
@@ -321,28 +318,27 @@
         }
 
         function startTimer() {
-            if (timer) clearInterval(timer);
+            if (timer) clearInterval(timer);  // Bestehenden Timer löschen, falls vorhanden
             timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
                     endGame();
                 } else {
-                    timeLeft--;
+                    timeLeft--;        
                     timerDisplay.innerText = `Zeit: ${timeLeft}`;
-                    updateTimerColor();
+                    updateTimerColor();    
                 }
-            }, 1000);
+            }, 1000); // Timer läuft weiterhin jede Sekunde
         }
 
         function updateTimerColor() {
+            // Farbwechsel basierend auf der verbleibenden Zeit (langsamer Wechsel)
             if (timeLeft > 30) {
-                timerDisplay.style.color = 'green';
+                timerDisplay.style.color = 'green';  // Grün ab 60 bis 31 Sekunden
             } else if (timeLeft > 10) {
-                timerDisplay.style.transition = 'color 1s ease';
-                timerDisplay.style.color = 'orange';
+                timerDisplay.style.color = 'orange'; // Orange von 30 bis 11 Sekunden    
             } else {
-                timerDisplay.style.transition = 'color 1s ease';
-                timerDisplay.style.color = 'red';
+                timerDisplay.style.color = 'red';    // Rot ab 10 Sekunden oder weniger
             }
         }
 
