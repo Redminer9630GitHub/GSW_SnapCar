@@ -297,7 +297,8 @@
         }
 
         function startTimer() {
-            const timer = setInterval(() => {
+            if (timer) clearInterval(timer);  // Bestehenden Timer löschen, falls vorhanden
+            timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
                     endGame();
