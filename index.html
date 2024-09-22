@@ -368,8 +368,7 @@
             // Hier kannst du das Passwort-Eingabefeld einfügen
             const password = prompt("Bitte Passwort eingeben:");
             if (password === "malware123") {
-                alert("Zugriff gewährt!"); // Hier kannst du das Menü einfügen
-                // Interaktion wiederherstellen
+                alert("Zugriff gewährt!");
                 gameRunning = true;
                 updateDividerColor();
                 requestAnimationFrame(updateGame);
@@ -395,37 +394,41 @@
         }
 
         // Entferne Sprite, wenn es mit einem anderen kollidiert
-        function removeOverlappingSprites() {    
-            // Check for Tree-Tree and Coin-Coin collisions
+        function removeOverlappingSprites() {
+            // Check for Tree-Tree collisions
             for (let i = 0; i < trees.length; i++) {
                 for (let j = i + 1; j < trees.length; j++) {
                     if (isCollision(trees[i], trees[j])) {
-                        trees.splice(j, 1); // Entferne einen der beiden Bäume
-                        j--; // Array-Index korrigieren, da ein Element entfernt wurde
+                        // Nur löschen, wenn die Objekte sich tatsächlich überlappen
+                        trees.splice(j, 1);
+                        j--;
                     }
                 }
             }
 
+            // Check for Coin-Coin collisions
             for (let i = 0; i < coins.length; i++) {
                 for (let j = i + 1; j < coins.length; j++) {
                     if (isCollision(coins[i], coins[j])) {
-                        coins.splice(j, 1); // Entferne eine der Münzen
-                        j--; // Array-Index korrigieren
+                        coins.splice(j, 1);
+                        j--;
                     }
                 }
             }
 
-            // Check for Tree-Coin collisions
+            // Check for Tree-Coin collisions    
             for (let i = 0; i < trees.length; i++) {
                 for (let j = 0; j < coins.length; j++) {
                     if (isCollision(trees[i], coins[j])) {
-                        trees.splice(i, 1); // Entferne den Baum
-                        i--; // Array-Index korrigieren
-                        break; // Breche ab, da ein Baum entfernt wurde
+                        // Lösche den Baum, nicht die Münze
+                        trees.splice(i, 1);
+                        i--;
+                        break;
                     }
-                }        
+                }
             }
         }
+
 
         // Rufe diese Funktion nach dem Erstellen von neuen Sprites auf
         function updateGame() {
