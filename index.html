@@ -150,6 +150,7 @@
         let highscore = localStorage.getItem('highscore') || 0;
         let gameOver = false;
         let timeLeft = 60;
+        let templateSpawnInterval = 2000;
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
@@ -184,6 +185,7 @@
         function startGame() {
             if (gameStarted) return;
             gameStarted = true;
+            setInterval(spawnRandomTemplate, templateSpawnInterval);
             startHint.style.display = 'none';
             startButton.style.display = 'none';
             timeLeft = 60;
@@ -381,6 +383,76 @@
             }
             // Rest der Steuerung ...
         });
+        
+        const templates = [
+            [
+                ['A', 'U', 'A'],
+                ['I', 'U', 'I'],
+                ['A', 'A', 'A'],
+                ['A', 'A', 'A'],
+                ['U', 'I', 'U'],
+                ['U', 'I', 'A'],
+                ['A', 'A', 'I'],
+                ['A', 'U', 'A']
+            ],
+            [
+                ['U', 'A', 'A'],    
+                ['I', 'A', 'I'],
+                ['A', 'A', 'A'],
+                ['A', 'U', 'A'],
+                ['A', 'I', 'U'],
+                ['I', 'A', 'U'],
+                ['A', 'A', 'A'],
+                ['I', 'I', 'I']
+            ]
+        ];
+
+        function spawnRandomTemplate() {
+            let template = getRandomTemplate();    
+            applyTemplate(template);
+        }
+
+        function applyTemplate(template) {
+            for (let row = 0; row < template.length; row++) {
+                for (let col = 0; col < template[row].length; col++) {
+                    let lane = col;
+                    let yPos = -row * 100; // Abstand zwischen den Objekten
+
+                    if (template[row][col] === 'U') {
+                        createTree(lane, yPos);
+                    } else if (template[row][col] === 'I') {
+                        createCoin(lane, yPos);
+                    }
+                }
+            }
+        }
+    
+        function createTree(lane, yPos) {
+            let tree = {
+                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 20,
+                y: yPos,
+                width: 40,
+                height: 40,
+            };
+            trees.push(tree);
+        }
+
+        function createCoin(lane, yPos) {
+            let coin = {
+                x: road.x + lane * road.laneWidth + road.laneWidth / 2 - 15,
+                y: yPos,
+                width: 30,
+                height: 30,
+                collected: false,
+            };
+            coins.push(coin);
+        }
+
+        function getRandomTemplate() {
+            const randomIndex = Math.floor(Math.random() * templates.length);
+            return templates[randomIndex];
+        }
+
     </script>
 </body>
 </html>
