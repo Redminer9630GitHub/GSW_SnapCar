@@ -344,7 +344,25 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= 150 ? `Du hast einen Baum gepflanzt! Eine Spende von: ${discount}` : `Game Over! Dein Score: ${score}`;
+            let basePrice = 100; // Grundpreis
+            let discount = 0; // Rabatt
+
+            if (score >= 300) {
+                discount = 100; // 100% Rabatt
+            } else if (score >= 250) {
+                discount = 75; // 75% Rabatt
+            } else if (score >= 200) {
+                discount = 25; // 25% Rabatt
+            }
+
+            let price = basePrice - (basePrice * (discount / 100));
+
+            if (score >= 150) {    
+                gameOverDisplay.innerText = `Du hast einen Baum gepflanzt! Eine Spende von: ${price}€`;
+            } else {
+                gameOverDisplay.innerText = `Game Over! Dein Score: ${score} \n Preis: ${price}€ (nicht genügend Punkte für einen Baum)`;
+            }
+    
             gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
@@ -357,6 +375,7 @@
                 startHint.style.display = 'block';
             }, 3000);
         }
+
 
         // Cooldown für Spurwechsel
         function handleLaneChange(direction) {
