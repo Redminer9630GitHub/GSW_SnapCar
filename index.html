@@ -353,7 +353,7 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= 150 ? `Gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.innerText = score >= 150 ? `Gewonnen! Du hast einen Baum gepflanzt! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
@@ -369,7 +369,7 @@
 
         // Cooldown für Spurwechsel
         function handleLaneChange(direction) {
-            if (Date.now() - lastLaneChange < 800) return;  // 0.8 Sekunden Cooldown
+            if (Date.now() - lastLaneChange < 600) return;  // 0.8 Sekunden Cooldown
             if (direction === 'left') {
                 car.lane = Math.max(0, car.lane - 1);
             } else if (direction === 'right') {
