@@ -87,8 +87,8 @@
         /* Vertikale Linie (Divider) */
         .divider {
             width: 5px;
-            height: 100%; /* Volle Höhe, um von oben bis zur Border zu reichen */
-            background-color: blue; /* Anfangs blau */
+            height: 100%;
+            background-color: blue;
             margin: 0;
         }
 
@@ -106,7 +106,7 @@
             justify-content: center;
             align-items: center;
             padding: 10px;
-            border: 5px solid blue; /* Anfangs blau */
+            border: 5px solid blue;
             border-radius: 25px;
         }
 
@@ -143,14 +143,14 @@
         const timerDisplay = document.getElementById('timer');
         const highscoreDisplay = document.getElementById('highscore');
         const gameOverDisplay = document.getElementById('gameOver');
-        const startButton = document.getElementById('startButton');
         const startHint = document.getElementById('startHint');
         
         let score = 0;
         let highscore = localStorage.getItem('highscore') || 0;
         let gameOver = false;
         let timeLeft = 60;
-        let templateSpawnInterval = 2000;
+        let cooldown = false; // Spurwechsel-Cooldown
+        let lastLaneChange = 0; // Zeit des letzten Spurwechsels
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
@@ -191,12 +191,11 @@
             score = 0;
             gameOver = false;
             scoreDisplay.innerText = `Score: ${score}`;
-            updateTimerColor();
             startTimer();
             gameOverDisplay.style.display = 'none';
             coins = [];
             trees = [];
-            dividers = [];  // Reset Dividers
+            dividers = [];
             requestAnimationFrame(updateGame);
         }
 
@@ -205,13 +204,13 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
+            drawDividers(); // Dividers unter dem Auto zeichnen
             drawCar();
             updateCoins();
             updateTrees();
-            updateDividers();  // Dividers aktualisieren
 
-            if (Math.random() < 0.01) createCoin();  // Spawnrate für Münzen verringert
-            if (Math.random() < 0.01) createTree();  // Spawnrate für Bäume verringert
+            if (Math.random() < 0.01) createCoin();
+            if (Math.random() < 0.01) createTree();
 
             requestAnimationFrame(updateGame);
         }
@@ -240,7 +239,7 @@
             }
         }
 
-        function updateDividers() {
+        function drawDividers() {
             if (dividers.length === 0 || dividers[dividers.length - 1].y > 50) {
                 createDivider();
             }
@@ -265,17 +264,22 @@
                 height: 30,
                 collected: false,
             };
+
+            if (trees.length > 0 && Math.abs(trees[trees.length - 1].x - coin.x) < 50) {
+                return; // Verhindere, dass Münzen zu nah an Bäumen erscheinen
+            }
+
             coins.push(coin);
         }
 
         function updateCoins() {
             coins.forEach(coin => {
                 coin.y += car.speed;
-                if (coin.y > canvas.height) {
+                if (coin.y > canvas.height || coin.collected) {
                     coins.splice(coins.indexOf(coin), 1);
                 }
-                if (!coin.collected &&
-                    coin.x < car.x + car.width &&
+
+                if (coin.x < car.x + car.width &&
                     coin.x + coin.width > car.x &&
                     coin.y < car.y + car.height &&
                     coin.y + coin.height > car.y) {
@@ -296,6 +300,11 @@
                 width: 40,
                 height: 40,
             };
+
+            if (coins.length > 0 && Math.abs(coins[coins.length - 1].x - tree.x) < 50) {
+                return; // Verhindere, dass Bäume zu nah an Münzen erscheinen
+            }
+
             trees.push(tree);
         }
 
@@ -358,15 +367,26 @@
             }, 3000);
         }
 
+        // Cooldown für Spurwechsel
+        function handleLaneChange(direction) {
+            if (Date.now() - lastLaneChange < 800) return;  // 0.8 Sekunden Cooldown
+            if (direction === 'left') {
+                car.lane = Math.max(0, car.lane - 1);
+            } else if (direction === 'right') {
+                car.lane = Math.min(road.lanes - 1, car.lane + 1);
+            }
+            lastLaneChange = Date.now();
+        }
+
         document.addEventListener('keydown', (event) => {
             if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }
             if (event.code === 'KeyA' || event.code === 'ArrowLeft') {
-                car.lane = Math.max(0, car.lane - 1);
+                handleLaneChange('left');
             }
             if (event.code === 'KeyD' || event.code === 'ArrowRight') {
-                car.lane = Math.min(road.lanes - 1, car.lane + 1);
+                handleLaneChange('right');
             }
         });
 
