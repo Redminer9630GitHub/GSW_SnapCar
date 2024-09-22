@@ -109,16 +109,6 @@
             border: 5px solid blue;
             border-radius: 25px;
         }
-
-        #zebraCrossing {
-            height: 30px;
-            background-color: white;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            z-index: 5;
-        }
     </style>
 </head>
 <body>
@@ -138,7 +128,6 @@
     </div>
     <div id="startHint">Drücke Leertaste um das Spiel zu starten</div>
     <div id="gameOver"></div>
-    <div id="zebraCrossing"></div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -147,7 +136,6 @@
         const highscoreDisplay = document.getElementById('highscore');
         const gameOverDisplay = document.getElementById('gameOver');
         const startHint = document.getElementById('startHint');
-        const zebraCrossing = document.getElementById('zebraCrossing');
         
         let score = 0;
         let highscore = localStorage.getItem('highscore') || 0;
