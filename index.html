@@ -122,7 +122,9 @@
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="infoWrapper">
         <div id="score">Score: 0</div>
+        <div class="divider"></div>
         <div id="timer">Zeit: 60</div>
+        <div class="divider"></div>
         <div id="highscore">Highscore: 0</div>
     </div>
     <div id="startHint">Drücke Leertaste um das Spiel zu starten</div>
@@ -205,9 +207,10 @@
 
             requestAnimationFrame(updateGame);
         }
-        
+
         function drawCar() {
-            car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
+            let targetX = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
+            car.x += (targetX - car.x) * 0.1;  // Weiche Bewegung zur Zielposition
             ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
         }
 
