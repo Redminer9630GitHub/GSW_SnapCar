@@ -63,56 +63,9 @@
             margin: 5px;
             padding: 0;
         }
-                #controlsInfo {
-            margin: 5px;
-            padding: 0;
-        }
-
-        /* Vertikale Linie (Divider) */
-        .divider {
-            width: 5px;
-            height: 100%;
-            background-color: blue;
-            margin: 0;
-        }
-
-        /* Änderungen beim Start des Spiels */
-        .active-border {
-            border-color: orange;
-        }
-
-        .active-divider {
-            background-color: orange;
-        }
-        
-        #infoWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            border: 5px solid blue;
-        }
-        
-        #startHint {
-            font-size: 20px;
-            color: white;
-            animation: pulse 1.7s infinite;
-            display: block;
-            margin-top: 8px;
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        @keyframes pulse {
-            0% { color: green; }
-            50% { color: black; }
-            100% { color: green; }
-        }
     </style>
 </head>
-<body>    
+<body>
     <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
     <div id="controlsInfo">
         A oder ← um nach links zu fahren.<br>
@@ -145,6 +98,7 @@
         let timeLeft = 60;
         let score = 0;
         let highscore = localStorage.getItem('highscore') || 0;
+        let lastLaneChange = Date.now();
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
@@ -254,7 +208,7 @@
                     coin.collected = true;
                     coins.splice(coins.indexOf(coin), 1);
                 }
-                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height); // Replace carImage with coinImage once you have the coin image.
+                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);
             });
         }
 
@@ -275,7 +229,7 @@
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
-                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height); // Replace carImage with treeImage once you have the tree image.
+                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
 
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
@@ -326,7 +280,6 @@
             }, 3000);
         }
 
-        // Pause-Funktion mit Passwort
         function pauseGame() {
             let password = prompt('Bitte gib das Passwort ein, um das Spiel zu pausieren:');
             if (password === 'malware123') {
@@ -337,16 +290,14 @@
             }
         }
 
-        // Spiel fortsetzen
         function resumeGame() {
             gamePaused = false;
             pauseScreen.style.display = 'none';
             requestAnimationFrame(updateGame);
         }
 
-        // Cooldown für Spurwechsel
         function handleLaneChange(direction) {
-            if (Date.now() - lastLaneChange < 600) return;  // 0.8 Sekunden Cooldown
+            if (Date.now() - lastLaneChange < 800) return;  // 0.8 Sekunden Cooldown
             if (direction === 'left') {
                 car.lane = Math.max(0, car.lane - 1);
             } else if (direction === 'right') {
@@ -366,7 +317,7 @@
         });
 
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' || event.code === ' ' && !gameStarted) {
+            if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }
             if (event.code === 'KeyA' || event.code === 'A' || event.code === 'ArrowLeft') {
@@ -377,7 +328,6 @@
             }
         });
 
-        // Spiel starten beim Klick auf die Leinwand
         canvas.addEventListener('click', startGame);
     </script>
 </body>
