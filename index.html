@@ -275,23 +275,33 @@
             };
             trees.push(tree);
         }
-
+        
         function updateTrees() {
             trees.forEach(tree => {
                 tree.y += car.speed;
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
-                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height); // Replace carImage with treeImage once you have the tree image.
 
-                if (tree.x < car.x + car.width &&
-                    tree.x + tree.width > car.x &&
-                    tree.y < car.y + car.height &&
-                    tree.y + tree.height > car.y) {
+                // Zeichne den Baum
+                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
+
+                // Hitbox anpassen (z.B. 80% der Breite und 80% der Höhe)
+                const hitboxWidth = tree.width * 0.8;
+                const hitboxHeight = tree.height * 0.6;
+                const hitboxX = tree.x + (tree.width - hitboxWidth) / 2;
+                const hitboxY = tree.y + (tree.height - hitboxHeight) / 2;
+
+                // Kollisionserkennung mit der angepassten Hitbox
+                if (hitboxX < car.x + car.width &&
+                    hitboxX + hitboxWidth > car.x &&
+                    hitboxY < car.y + car.height &&
+                    hitboxY + hitboxHeight > car.y) {
                     endGame();
                 }
             });
         }
+
 
         function startTimer() {
             if (timer) clearInterval(timer);
@@ -320,7 +330,7 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= 150 ? `Du hast einen Baum gepflanzt! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.innerText = score >= 150 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
