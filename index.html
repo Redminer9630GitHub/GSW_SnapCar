@@ -17,10 +17,6 @@
             height: 100vh;
         }
 
-        h1 {
-            font-size: 24px;
-        }
-
         canvas {
             margin: 20px auto;
             border: 2px solid #333;
@@ -46,87 +42,36 @@
             z-index: 10;
         }
 
-        #startHint {
-            font-size: 20px;
-            color: white;
-            animation: pulse 1.7s infinite;
-            display: block;
-            margin-top: 8px;
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        @keyframes pulse {
-            0% { color: green; }
-            50% { color: black; }
-            100% { color: green; }
-        }
-
-        #startButton {
-            font-size: 24px;
-            padding: 10px 20px;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 20px;
-            background-color: #4CAF50;
+        #pauseScreen {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 20;
         }
 
-        #startButton:hover {
-            background-color: #45a049;
+        #pauseScreen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         #controlsInfo {
             margin: 5px;
             padding: 0;
         }
-
-        /* Vertikale Linie (Divider) */
-        .divider {
-            width: 5px;
-            height: 100%;
-            background-color: blue;
-            margin: 0;
-        }
-
-        /* Änderungen beim Start des Spiels */
-        .active-border {
-            border-color: orange;
-        }
-
-        .active-divider {
-            background-color: orange;
-        }
-        
-        #infoWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            border: 5px solid blue;
-            border-radius: 25px;
-        }
     </style>
 </head>
 <body>
-    <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
-    <div id="controlsInfo">
-        A oder ← um nach links zu fahren.<br>
-        D oder → um nach rechts zu fahren.<br>
-        Erreiche 150 Punkte um einen Baum zu pflanzen.<br>
-    </div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="infoWrapper">
         <div id="score">Score: 0</div>
-        <div class="divider"></div>
         <div id="timer">Zeit: 60</div>
-        <div class="divider"></div>
         <div id="highscore">Highscore: 0</div>
     </div>
-    <div id="startHint">Drücke Leertaste um das Spiel zu starten</div>
     <div id="gameOver"></div>
     <div id="pauseScreen">
         <img src="blue_screen.png" alt="Pause">
@@ -138,23 +83,19 @@
         const timerDisplay = document.getElementById('timer');
         const highscoreDisplay = document.getElementById('highscore');
         const gameOverDisplay = document.getElementById('gameOver');
-        const startHint = document.getElementById('startHint');
-        
-        let score = 0;
-        let highscore = localStorage.getItem('highscore') || 0;
+        const pauseScreen = document.getElementById('pauseScreen');
+
+        let gamePaused = false;
+        let gameStarted = false;
         let gameOver = false;
         let timeLeft = 60;
-        let cooldown = false; // Spurwechsel-Cooldown
-        let lastLaneChange = 0; // Zeit des letzten Spurwechsels
+        let score = 0;
+        let highscore = localStorage.getItem('highscore') || 0;
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
         const carImage = new Image();
         carImage.src = 'car.png';
-        const coinImage = new Image();
-        coinImage.src = 'coin.png';
-        const treeImage = new Image();
-        treeImage.src = 'tree.png';
 
         let car = {
             x: canvas.width / 2 - 25,
@@ -175,80 +116,55 @@
 
         let coins = [];
         let trees = [];
-        let dividers = [];
-        let gameStarted = false;
 
         function startGame() {
             if (gameStarted) return;
             gameStarted = true;
-            startHint.style.display = 'none';
             timeLeft = 60;
             score = 0;
             gameOver = false;
             scoreDisplay.innerText = `Score: ${score}`;
+            updateTimerColor();
             startTimer();
             gameOverDisplay.style.display = 'none';
             coins = [];
             trees = [];
-            dividers = [];
-            zebraCrossing.style.top = '0px'; // Zebrastreifen auf Startposition setzen
             requestAnimationFrame(updateGame);
         }
 
         function updateGame() {
-            if (gameOver) return;
+            if (gameOver || gamePaused) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawRoad();
-            drawDividers();
             drawCar();
             updateCoins();
             updateTrees();
 
-            if (Math.random() < 0.01) createCoin();
-            if (Math.random() < 0.01) createTree();
+            if (Math.random() < 0.01) createCoin();  
+            if (Math.random() < 0.01) createTree();  
 
             requestAnimationFrame(updateGame);
         }
 
         function drawCar() {
-            let targetX = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
-            car.x += (targetX - car.x) * 0.1;  // Weiche Bewegung zur Zielposition
+            car.x = road.x + car.lane * road.laneWidth + road.laneWidth / 2 - car.width / 2;
             ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
         }
 
         function drawRoad() {
             ctx.fillStyle = 'gray';
             ctx.fillRect(road.x, 0, road.width, road.height);
-        }
+            ctx.strokeStyle = 'white';
+            ctx.setLineDash([20, 15]);
+            ctx.lineWidth = 5;
 
-        function createDivider() {
             for (let i = 1; i < road.lanes; i++) {
-                let divider = {
-                    x: road.x + i * road.laneWidth,
-                    y: -30,
-                    width: 5,
-                    height: 30,
-                    speed: car.speed
-                };
-                dividers.push(divider);
+                ctx.beginPath();
+                ctx.moveTo(road.x + i * road.laneWidth, 0);
+                ctx.lineTo(road.x + i * road.laneWidth, road.height);
+                ctx.stroke();
             }
-        }
-
-        function drawDividers() {
-            if (dividers.length === 0 || dividers[dividers.length - 1].y > 50) {
-                createDivider();
-            }
-
-            dividers.forEach(divider => {
-                divider.y += divider.speed;
-                if (divider.y > canvas.height) {
-                    dividers.splice(dividers.indexOf(divider), 1);
-                } else {
-                    ctx.fillStyle = 'white';
-                    ctx.fillRect(divider.x, divider.y, divider.width, divider.height);
-                }
-            });
         }
 
         function createCoin() {
@@ -260,30 +176,26 @@
                 height: 30,
                 collected: false,
             };
-
-            if (trees.length > 0 && Math.abs(trees[trees.length - 1].x - coin.x) < 50) {
-                return; // Verhindere, dass Münzen zu nah an Bäumen erscheinen
-            }
-
             coins.push(coin);
         }
 
         function updateCoins() {
             coins.forEach(coin => {
                 coin.y += car.speed;
-                if (coin.y > canvas.height || coin.collected) {
+                if (coin.y > canvas.height) {
                     coins.splice(coins.indexOf(coin), 1);
                 }
-
-                if (coin.x < car.x + car.width &&
+                if (!coin.collected &&
+                    coin.x < car.x + car.width &&
                     coin.x + coin.width > car.x &&
                     coin.y < car.y + car.height &&
                     coin.y + coin.height > car.y) {
                     score += 10;
                     scoreDisplay.innerText = `Score: ${score}`;
-                    coin.collected = true; // Münze als eingesammelt markieren
+                    coin.collected = true;
+                    coins.splice(coins.indexOf(coin), 1);
                 }
-                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height);
+                ctx.drawImage(carImage, coin.x, coin.y, coin.width, coin.height); // Replace carImage with coinImage once you have the coin image.
             });
         }
 
@@ -295,11 +207,6 @@
                 width: 40,
                 height: 40,
             };
-
-            if (coins.length > 0 && Math.abs(coins[coins.length - 1].x - tree.x) < 50) {
-                return; // Verhindere, dass Bäume zu nah an Münzen erscheinen
-            }
-
             trees.push(tree);
         }
 
@@ -309,7 +216,7 @@
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
-                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
+                ctx.drawImage(carImage, tree.x, tree.y, tree.width, tree.height); // Replace carImage with treeImage once you have the tree image.
 
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
@@ -321,51 +228,32 @@
         }
 
         function startTimer() {
-            if (timer) clearInterval(timer);  // Bestehenden Timer löschen, falls vorhanden
+            if (timer) clearInterval(timer);
             timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
                     endGame();
                 } else {
-                    timeLeft--;        
+                    timeLeft--;
                     timerDisplay.innerText = `Zeit: ${timeLeft}`;
-                    updateTimerColor();    
+                    updateTimerColor();
                 }
-            }, 1000); // Timer läuft weiterhin jede Sekunde
+            }, 1000);
         }
 
         function updateTimerColor() {
-            // Farbwechsel basierend auf der verbleibenden Zeit (langsamer Wechsel)
             if (timeLeft > 30) {
-                timerDisplay.style.color = 'green';  // Grün ab 60 bis 31 Sekunden
-            } else if (timeLeft > 10) {
-                timerDisplay.style.color = 'orange'; // Orange von 30 bis 11 Sekunden    
+                timerDisplay.style.color = 'green';
+            } else if (timeLeft > 0) {
+                timerDisplay.style.color = 'orange';
             } else {
-                timerDisplay.style.color = 'red';    // Rot ab 10 Sekunden oder weniger
+                timerDisplay.style.color = 'red';
             }
         }
 
         function endGame() {
             gameOver = true;
-            let basePrice = 0.99; // Grundpreis
-            let discount = 0; // Rabatt
-
-            if (score >= 300) {
-                discount = 100; // 100% Rabatt
-            } else if (score >= 250) {
-                discount = 75; // 75% Rabatt
-            } else if (score >= 200) {
-                discount = 25; // 25% Rabatt
-            }
-
-            let price = basePrice - (basePrice * (discount / 100));
-
-            if (score >= 150) {    
-                gameOverDisplay.innerText = `Du hast einen Baum gepflanzt! Eine Spende von: ${price}€`;
-            } else {
-                gameOverDisplay.innerText = `Game Over! Dein Score: ${score}`;
-            }
-    
+            gameOverDisplay.innerText = score >= 150 ? `Du hast einen Baum gepflanzt! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
@@ -375,53 +263,30 @@
             }
 
             setTimeout(() => {
-                startHint.style.display = 'block';
+                gameStarted = false;
             }, 3000);
         }
 
-
-        // Cooldown für Spurwechsel
-        function handleLaneChange(direction) {
-            if (Date.now() - lastLaneChange < 600) return;  // 0.8 Sekunden Cooldown
-            if (direction === 'left') {
-                car.lane = Math.max(0, car.lane - 1);
-            } else if (direction === 'right') {
-                car.lane = Math.min(road.lanes - 1, car.lane + 1);
-            }
-            lastLaneChange = Date.now();
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' && !gameStarted) {
-                startGame();
-            }
-            if (event.code === 'KeyA' || event.code === 'ArrowLeft') {
-                handleLaneChange('left');
-            }
-            if (event.code === 'KeyD' || event.code === 'ArrowRight') {
-                handleLaneChange('right');
-            }
-        });
-
-        const pauseScreen = document.getElementById('pauseScreen');
-
-        let gamePaused = false;
-
-        // Funktion zum Pausieren des Spiels
+        // Pause-Funktion mit Passwort
         function pauseGame() {
-            gamePaused = true;
-            pauseScreen.style.display = 'block';  // Zeige das Bild an
+            let password = prompt('Bitte gib das Passwort ein, um das Spiel zu pausieren:');
+            if (password === 'malware123') {
+                gamePaused = true;
+                pauseScreen.style.display = 'block';
+            } else {
+                alert('Falsches Passwort!');
+            }
         }
 
-        // Funktion zum Fortsetzen des Spiels
+        // Spiel fortsetzen
         function resumeGame() {
             gamePaused = false;
-            pauseScreen.style.display = 'none';  // Verstecke das Bild
+            pauseScreen.style.display = 'none';
+            requestAnimationFrame(updateGame);
         }
 
-        // Event Listener für Shift + H
         document.addEventListener('keydown', (event) => {
-            if (event.shiftKey && event.code === 'KeyH') {
+            if (event.key === 'H' && event.shiftKey) {
                 if (gamePaused) {
                     resumeGame();
                 } else {
@@ -430,7 +295,8 @@
             }
         });
 
-        startButton.addEventListener('click', startGame);
+        // Spiel starten beim Klick auf die Leinwand
+        canvas.addEventListener('click', startGame);
     </script>
 </body>
 </html>
