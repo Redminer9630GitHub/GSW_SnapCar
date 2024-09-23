@@ -334,10 +334,12 @@
             let password = prompt('Bitte gib das Passwort ein, um das Spiel zu pausieren:');
             if (password === 'malware123') {
                 gamePaused = true;
-                alert('Zugriff gewährt')
                 pauseScreen.style.display = 'block';
+                alert('Zugriff gewährt')
+                console.log('Zugriff gewährt')
             } else {
                 alert('Zugriff verweigert');
+                console.log('Zugriff verweigert')
             }
         }
 
