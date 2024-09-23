@@ -128,6 +128,9 @@
     </div>
     <div id="startHint">Drücke Leertaste um das Spiel zu starten</div>
     <div id="gameOver"></div>
+    <div id="pauseScreen">
+        <img src="blue_screen.png" alt="Pause">
+    </div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -397,6 +400,33 @@
             }
             if (event.code === 'KeyD' || event.code === 'ArrowRight') {
                 handleLaneChange('right');
+            }
+        });
+
+        const pauseScreen = document.getElementById('pauseScreen');
+
+        let gamePaused = false;
+
+        // Funktion zum Pausieren des Spiels
+        function pauseGame() {
+            gamePaused = true;
+            pauseScreen.style.display = 'block';  // Zeige das Bild an
+        }
+
+        // Funktion zum Fortsetzen des Spiels
+        function resumeGame() {
+            gamePaused = false;
+            pauseScreen.style.display = 'none';  // Verstecke das Bild
+        }
+
+        // Event Listener für Shift + H
+        document.addEventListener('keydown', (event) => {
+            if (event.shiftKey && event.code === 'KeyH') {
+                if (gamePaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
             }
         });
 
