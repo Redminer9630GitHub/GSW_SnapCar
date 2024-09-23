@@ -295,6 +295,7 @@
             timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
+                    startHint.style.display = 'none'
                     endGame();
                 } else {
                     timeLeft--;
