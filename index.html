@@ -362,8 +362,16 @@
 
         // Spiel fortsetzen
         function resumeGame() {
-            gamePaused = false;
-            pauseScreen.style.display = 'none';
+            let password = prompt('Bitte gib das Passwort ein, um das Spiel fortzufahren:');
+            if (password === 'malware123') {
+                gamePaused = false;
+                pauseScreen.style.display = 'none';
+                alert('Zugriff gewährt')
+                console.log('Zugriff gewährt')
+            } else {
+                alert('Zugriff verweigert');
+                console.log('Zugriff verweigert')
+            }
             requestAnimationFrame(updateGame);
         }
         
