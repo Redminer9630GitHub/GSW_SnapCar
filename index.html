@@ -286,21 +286,24 @@
                 // Zeichne den Baum
                 ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
 
-                // Hitbox anpassen (z.B. 80% der Breite und 80% der Höhe)
-                const hitboxWidth = tree.width * 0.8;
-                const hitboxHeight = tree.height * 0.6;
-                const hitboxX = tree.x + (tree.width - hitboxWidth) / 2;
-                const hitboxY = tree.y + (tree.height - hitboxHeight) / 2;
+                // Hitbox anpassen (Breite und Höhe in zwei Parametern)
+                const hitboxWidth = tree.width * 0.8; // Breite
+                const hitboxTopHeight = tree.height * 0.35; // Höhe oben
+                const hitboxBottomHeight = tree.height * 0.7; // Höhe unten
 
-                // Kollisionserkennung mit der angepassten Hitbox
-                if (hitboxX < car.x + car.width &&
+                const hitboxX = tree.x + (tree.width - hitboxWidth) / 2;
+                const hitboxY = tree.y + (tree.height - (hitboxTopHeight + hitboxBottomHeight)) / 2;
+
+                // Kollisionserkennung mit der angepassten Hitbox        
+                if (hitboxX < car.x + car.width &&    
                     hitboxX + hitboxWidth > car.x &&
                     hitboxY < car.y + car.height &&
-                    hitboxY + hitboxHeight > car.y) {
+                    hitboxY + (hitboxTopHeight + hitboxBottomHeight) > car.y) {
                     endGame();
                 }
             });
         }
+
 
 
         function startTimer() {
