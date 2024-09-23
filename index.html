@@ -366,13 +366,13 @@
         });
 
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' && !gameStarted) {
+            if (event.code === 'Space' || event.code === ' ' && !gameStarted) {
                 startGame();
             }
-            if (event.code === 'KeyA' || event.code === 'ArrowLeft') {
+            if (event.code === 'KeyA' || event.code === 'A' || event.code === 'ArrowLeft') {
                 handleLaneChange('left');
             }
-            if (event.code === 'KeyD' || event.code === 'ArrowRight') {
+            if (event.code === 'KeyD' || event.code === 'D' || event.code === 'ArrowRight') {
                 handleLaneChange('right');
             }
         });
