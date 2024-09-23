@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Never Gonna Give You Up</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <video id="myVideo" autoplay muted>
+        <source src="video.mp4" type="video/mp4">
+        Dein Browser unterstützt das Videoformat nicht.
+    </video>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        video.play();
+    </script>
+</body>
+</html>
