@@ -178,8 +178,11 @@
         let coins = [];
         let trees = [];
 
-        function startGame() {
-            if (gameStarted) return;
+        function startGame() {    
+            if (gameStarted) {
+                location.reload();
+                return;
+            }
             gameStarted = true;
             timeLeft = 60;
             score = 0;
