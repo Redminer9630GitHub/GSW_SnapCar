@@ -180,7 +180,6 @@
 
         function startGame() {    
             if (gameStarted) {
-                location.reload();
                 return;
             }
             gameStarted = true;
@@ -311,7 +310,7 @@
             timer = setInterval(() => {
                 if (gameOver || timeLeft <= 0) {
                     clearInterval(timer);
-                    startHint.style.display = 'none'
+                    location.reload();
                     endGame();
                 } else {
                     timeLeft--;
