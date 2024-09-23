@@ -63,15 +63,69 @@
             margin: 5px;
             padding: 0;
         }
+                #controlsInfo {
+            margin: 5px;
+            padding: 0;
+        }
+
+        /* Vertikale Linie (Divider) */
+        .divider {
+            width: 5px;
+            height: 100%;
+            background-color: blue;
+            margin: 0;
+        }
+
+        /* Änderungen beim Start des Spiels */
+        .active-border {
+            border-color: orange;
+        }
+
+        .active-divider {
+            background-color: orange;
+        }
+        
+        #infoWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border: 5px solid blue;
+        }
+        
+        #startHint {
+            font-size: 20px;
+            color: white;
+            animation: pulse 1.7s infinite;
+            display: block;
+            margin-top: 8px;
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes pulse {
+            0% { color: green; }
+            50% { color: black; }
+            100% { color: green; }
+        }
     </style>
 </head>
-<body>
+<body>    
+    <p>GSW 7 Jahrgang - Tag der offenen Tür</p>
+    <div id="controlsInfo">
+        A oder ← um nach links zu fahren.<br>
+        D oder → um nach rechts zu fahren.<br>
+        Erreiche 150 Punkte um einen Baum zu pflanzen.<br>
+    </div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="infoWrapper">
         <div id="score">Score: 0</div>
         <div id="timer">Zeit: 60</div>
         <div id="highscore">Highscore: 0</div>
     </div>
+    <div id="startHint">Drücke Leertaste um das Spiel zu starten</div>
     <div id="gameOver"></div>
     <div id="pauseScreen">
         <img src="blue_screen.png" alt="Pause">
