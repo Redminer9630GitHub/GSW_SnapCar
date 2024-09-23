@@ -150,6 +150,10 @@
 
         const carImage = new Image();
         carImage.src = 'car.png';
+        const treeImage = new Image();
+        treeImage.src = 'tree.png';
+        const coinImage = new Image();
+        coinImage.src = 'coin.png';
 
         let car = {
             x: canvas.width / 2 - 25,
@@ -249,7 +253,7 @@
                     coin.collected = true;
                     coins.splice(coins.indexOf(coin), 1);
                 }
-                ctx.drawImage(carImage, coin.x, coin.y, coin.width, coin.height); // Replace carImage with coinImage once you have the coin image.
+                ctx.drawImage(coinImage, coin.x, coin.y, coin.width, coin.height); // Replace carImage with coinImage once you have the coin image.
             });
         }
 
@@ -270,7 +274,7 @@
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
-                ctx.drawImage(carImage, tree.x, tree.y, tree.width, tree.height); // Replace carImage with treeImage once you have the tree image.
+                ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height); // Replace carImage with treeImage once you have the tree image.
 
                 if (tree.x < car.x + car.width &&
                     tree.x + tree.width > car.x &&
