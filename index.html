@@ -353,6 +353,7 @@
                 pauseScreen.style.display = 'block';
                 console.log('Zugriff gewährt')
             } else {
+                alert('Zugriff verweigert')
                 console.log('Zugriff verweigert')
             }
         }
@@ -365,6 +366,7 @@
                 pauseScreen.style.display = 'none';
                 console.log('Zugriff gewährt')
             } else {
+                alert('Zugriff verweigert')
                 console.log('Zugriff verweigert')
             }
             requestAnimationFrame(updateGame);
