@@ -380,17 +380,6 @@
             lastLaneChange = Date.now();
         }
 
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'H' && event.shiftKey) {
-                if (gamePaused) {
-                    resumeGame();
-                } else {
-                    pauseGame();
-                }
-            }
-        });
-
         document.addEventListener('keydown', (event) => {
             if (event.code === 'Space' || event.code === ' ' && !gameStarted) {
                 startGame();
@@ -400,6 +389,13 @@
             }
             if (event.code === 'KeyD' || event.code === 'D' || event.code === 'ArrowRight') {
                 handleLaneChange('right');
+            }
+            if (event.key === 'H' && event.shiftKey) {
+                if (gamePaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
             }
         });
 
