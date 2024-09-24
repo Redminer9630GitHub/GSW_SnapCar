@@ -276,6 +276,7 @@
         }
         
         function updateTrees() {
+            tree.style.border = "2px solid black";
             trees.forEach(tree => {
                 tree.y += car.speed;
                 if (tree.y > canvas.height) {
@@ -286,9 +287,9 @@
                 ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
 
                 // Hitbox anpassen (Breite und Höhe in zwei Parametern)
-                const hitboxWidth = tree.width * 0.8; // Breite
-                const hitboxTopHeight = tree.height * 0.35; // Höhe oben
-                const hitboxBottomHeight = tree.height * 0.7; // Höhe unten
+                const hitboxWidth = tree.width * 0.65; // Breite
+                const hitboxTopHeight = tree.height * 0.1; // Höhe oben
+                const hitboxBottomHeight = tree.height * 0.5; // Höhe unten
 
                 const hitboxX = tree.x + (tree.width - hitboxWidth) / 2;
                 const hitboxY = tree.y + (tree.height - (hitboxTopHeight + hitboxBottomHeight)) / 2;
