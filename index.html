@@ -117,7 +117,7 @@
     <div id="controlsInfo">
         A oder ← um nach links zu fahren.<br>
         D oder → um nach rechts zu fahren.<br>
-        Erreiche 150 Punkte um einen Preis zu gewinnen.<br>
+        Erreiche 0 Punkte um einen Preis zu gewinnen.<br>
     </div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="infoWrapper">
@@ -331,7 +331,7 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= 150 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.innerText = score >= 120 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
