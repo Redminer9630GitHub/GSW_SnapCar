@@ -276,7 +276,6 @@
         }
         
         function updateTrees() {
-            tree.style.border = "2px solid black";
             trees.forEach(tree => {
                 tree.y += car.speed;
                 if (tree.y > canvas.height) {
@@ -352,10 +351,8 @@
             if (password === 'malware123') {
                 gamePaused = true;
                 pauseScreen.style.display = 'block';
-                alert('Zugriff gewährt')
                 console.log('Zugriff gewährt')
             } else {
-                alert('Zugriff verweigert');
                 console.log('Zugriff verweigert')
             }
         }
