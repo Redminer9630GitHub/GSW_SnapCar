@@ -348,7 +348,7 @@
         // Pause-Funktion mit Passwort
         function pauseGame() {
             let password = prompt('Bitte gib das Passwort ein, um das Spiel zu pausieren:');
-            if (password === 'malware123') {
+            if (password === ${{ secrets.password }}) {
                 gamePaused = true;
                 pauseScreen.style.display = 'block';
                 console.log('Zugriff gewährt')
@@ -360,7 +360,7 @@
         // Spiel fortsetzen
         function resumeGame() {
             let password = prompt('Bitte gib das Passwort ein, um das Spiel fortzufahren:');
-            if (password === 'malware123') {
+            if (password === ${{ secrets.password }}) {
                 gamePaused = false;
                 pauseScreen.style.display = 'none';
                 console.log('Zugriff gewährt')
