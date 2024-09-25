@@ -178,7 +178,8 @@
         let coins = [];
         let trees = [];
 
-        function startGame() {    
+        function startGame() {
+            console.log('Attempted to start Game')
             if (gameStarted) { return; }
             gameStarted = true;
             timeLeft = 60;
@@ -192,6 +193,7 @@
             coins = [];
             trees = [];
             requestAnimationFrame(updateGame);
+            console.log('Started Game')
         }
 
         function updateGame() {
@@ -214,19 +216,31 @@
             car.x += (targetX - car.x) * 0.1;  // Weiche Bewegung zur Zielposition
             ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
         }
+        
+        let roadLineOffset = 0; // Verschiebung der Straßenmarkierung
 
         function drawRoad() {
             ctx.fillStyle = 'gray';
             ctx.fillRect(road.x, 0, road.width, road.height);
+    
             ctx.strokeStyle = 'white';
-            ctx.setLineDash([20, 15]);
+            ctx.setLineDash([20, 15]); // Länge und Abstand der Striche
             ctx.lineWidth = 5;
+
+            // Bewegung der Straßenmarkierung    
+            ctx.lineDashOffset = roadLineOffset;
 
             for (let i = 1; i < road.lanes; i++) {
                 ctx.beginPath();
                 ctx.moveTo(road.x + i * road.laneWidth, 0);
                 ctx.lineTo(road.x + i * road.laneWidth, road.height);
                 ctx.stroke();
+            }
+
+            // Aktualisiere die Verschiebung der Linien, um sie nach unten zu bewegen
+            roadLineOffset -= car.speed; // Die Geschwindigkeit der Bewegung anpassen
+            if (roadLineOffset < -35) { // Wenn die Linie eine bestimmte Verschiebung erreicht hat
+                roadLineOffset = 0;      // Zurücksetzen, damit die Bewegung kontinuierlich bleibt
             }
         }
 
@@ -331,10 +345,12 @@
             gameOver = true;
             gameOverDisplay.innerText = score >= 120 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
+            console.log('Player won/lose the Game')
 
             if (score > highscore) {
                 highscore = score;
                 localStorage.setItem('highscore', highscore);
+                console.log('Saved Highscore in localStorage')
                 highscoreDisplay.innerText = `Highscore: ${highscore}`;
             }
 
@@ -346,26 +362,26 @@
         // Pause-Funktion mit Passwort
         function pauseGame() {
             let password = prompt('Bitte gib das Passwort ein, um das Spiel zu pausieren:');
-            if (password === ${{ secrets.password }}) {
+            if (password === '17uhr_TJW') {
                 gamePaused = true;
                 pauseScreen.style.display = 'block';
-                console.log('Zugriff gewährt')
+                console.log('Paused Game')
             } else {
                 alert('Zugriff verweigert')
-                console.log('Zugriff verweigert')
+                console.log('Access Denied')
             }
         }
 
         // Spiel fortsetzen
         function resumeGame() {
             let password = prompt('Bitte gib das Passwort ein, um das Spiel fortzufahren:');
-            if (password === ${{ secrets.password }}) {
+            if (password === '17uhr_TJW') {
                 gamePaused = false;
                 pauseScreen.style.display = 'none';
-                console.log('Zugriff gewährt')
+                console.log('Unpaused Game')
             } else {
                 alert('Zugriff verweigert')
-                console.log('Zugriff verweigert')
+                console.log('Access Denied')
             }
             requestAnimationFrame(updateGame);
         }
@@ -374,11 +390,24 @@
             if (Date.now() - lastLaneChange < 600) return;  // 0.6 Sekunden Cooldown
             if (direction === 'left') {
                 car.lane = Math.max(0, car.lane - 1);
+                console.log('Moved to left')
             } else if (direction === 'right') {
                 car.lane = Math.min(road.lanes - 1, car.lane + 1);
+                console.log('Moved to right')
             }
             lastLaneChange = Date.now();
         }
+        
+        // Tastenkombination für Shift + H
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'H' && event.shiftKey) {
+                if (gamePaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
+            }
+        });
 
         document.addEventListener('keydown', (event) => {
             alert(event.code); // Zeigt die gedrückte Taste in der Konsole an
@@ -391,13 +420,6 @@
             if (event.code === 'ArrowRight' || event.code === 'KeyD') {
                 handleLaneChange('right');
             } 
-            if (event.code === 'H' && event.shiftKey) {
-                if (gamePaused) {
-                    resumeGame();
-                } else {
-                    pauseGame();
-                }
-            }
         });
 
 
