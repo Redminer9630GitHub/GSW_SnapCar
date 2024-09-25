@@ -410,7 +410,6 @@
         });
 
         document.addEventListener('keydown', (event) => {
-            alert(event.code); // Zeigt die gedrückte Taste in der Konsole an
             if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }
@@ -421,7 +420,10 @@
                 handleLaneChange('right');
             } 
         });
-
+        
+        document.addEventListener('keydown', (event) => {
+            alert(`Taste gedrückt: ${event.code}`);
+        });
 
         // Spiel starten beim Klick auf die Leinwand
         canvas.addEventListener('click', startGame);
