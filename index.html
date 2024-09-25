@@ -356,9 +356,9 @@
             console.log('Player won/lose the Game')
             
             if (score >= pointsNeeded) {
-                document.body.style.backgroundColor = 'lightgreen';  // Farbe für Gewinn
+                document.body.style.Color = 'lightgreen';  // Farbe für Gewinn
             } else {
-                document.body.style.backgroundColor = 'red';  // Farbe für Game Over
+                document.body.style.Color = 'red';  // Farbe für Game Over
             }
 
             if (score > highscore) {
@@ -448,14 +448,8 @@
             }
         });
 
-        document.getElementById('gameOver').addEventListener('click', () => {
-            const colorBox = document.getElementById('colorBox');
-    
-            // Hier änderst du die Hintergrundfarbe
-            colorBox.style.backgroundColor = 'red'; // Neue Farbe einstellen
-        
-            // Optional: Textfarbe ändern
-            colorBox.style.color = 'white';
+        funtion changeGameOver() {
+            gameOver.style.color = 'green';
         });
 
         canvas.addEventListener('click', startGame);
