@@ -381,7 +381,7 @@
         }
 
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' || event.code === ' ' && !gameStarted) {
+            if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }
             if (event.code === 'KeyA' || event.code === 'A' || event.code === 'ArrowLeft') {
