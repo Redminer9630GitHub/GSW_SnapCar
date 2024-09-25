@@ -146,10 +146,11 @@
         let gameOver = false;
         let timeLeft = 60;
         let score = 0;
-        let highscore = localStorage.getItem('highscore') || 180;
+        let highscore = localStorage.getItem('highscore') || 230;
         let lastLaneChange = 0; 
         let mapHistory = [];
 
+        let pointsNeeded = 150
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
@@ -350,9 +351,15 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= 120 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.innerText = score >= pointsNeeded ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
             console.log('Player won/lose the Game')
+            
+            if (score >= pointsNeeded) {
+                document.body.style.backgroundColor = 'lightgreen';  // Farbe für Gewinn
+            } else {
+                document.body.style.backgroundColor = 'red';  // Farbe für Game Over
+            }
 
             if (score > highscore) {
                 highscore = score;
@@ -439,6 +446,16 @@
             if (event.key === 'O' && event.shiftKey) {
                 displayMapHistory();
             }
+        });
+
+        document.getElementById('gameOver').addEventListener('click', () => {
+            const colorBox = document.getElementById('colorBox');
+    
+            // Hier änderst du die Hintergrundfarbe
+            colorBox.style.backgroundColor = 'red'; // Neue Farbe einstellen
+        
+            // Optional: Textfarbe ändern
+            colorBox.style.color = 'white';
         });
 
         canvas.addEventListener('click', startGame);
