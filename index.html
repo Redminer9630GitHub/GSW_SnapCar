@@ -381,16 +381,17 @@
         }
 
         document.addEventListener('keydown', (event) => {
-            if ((event.code === 'Space' || event.code === ' ') && !gameStarted) {
+            alert(event.code); // Zeigt die gedrückte Taste in der Konsole an
+            if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }
-            if (event.code === 'KeyA' || event.code === 'A' || event.code === 'ArrowLeft') {
+            if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
                 handleLaneChange('left');
             }
-            if (event.code === 'KeyD' || event.code === 'D' || event.code === 'ArrowRight') {
+            if (event.code === 'ArrowRight' || event.code === 'KeyD') {
                 handleLaneChange('right');
-            }
-            if (event.key === 'H' && event.shiftKey) {
+            } 
+            if (event.code === 'H' && event.shiftKey) {
                 if (gamePaused) {
                     resumeGame();
                 } else {
@@ -398,6 +399,7 @@
                 }
             }
         });
+
 
         // Spiel starten beim Klick auf die Leinwand
         canvas.addEventListener('click', startGame);
