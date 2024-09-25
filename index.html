@@ -148,6 +148,8 @@
         let score = 0;
         let highscore = localStorage.getItem('highscore') || 180;
         let lastLaneChange = 0; 
+        let mapHistory = [];
+
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
@@ -254,6 +256,7 @@
                 collected: false,
             };
             coins.push(coin);
+            mapHistory.push({ type: 'coin', x: coin.x, y: coin.y, time: Date.now() });
         }
 
         function updateCoins() {
@@ -262,6 +265,8 @@
                 if (coin.y > canvas.height) {
                     coins.splice(coins.indexOf(coin), 1);
                 }
+                mapHistory.push({ type: 'coin', x: coin.x, y: coin.y, time: Date.now() });
+                
                 if (!coin.collected &&
                     coin.x < car.x + car.width &&
                     coin.x + coin.width > car.x &&
@@ -285,6 +290,7 @@
                 height: 40,
             };
             trees.push(tree);
+            mapHistory.push({ type: 'tree', x: tree.x, y: tree.y, time: Date.now() });
         }
         
         function updateTrees() {
@@ -293,6 +299,7 @@
                 if (tree.y > canvas.height) {
                     trees.splice(trees.indexOf(tree), 1);
                 }
+                mapHistory.push({ type: 'tree', x: tree.x, y: tree.y, time: Date.now() });
 
                 // Zeichne den Baum
                 ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
@@ -420,8 +427,20 @@
                 handleLaneChange('right');
             } 
         });
-        
-        // Spiel starten beim Klick auf die Leinwand
+
+        function displayMapHistory() {
+            console.log('Verlauf der Map:');
+            mapHistory.forEach(item => {
+                alert(`${item.type === 'coin' ? 'Coin' : 'Baum'} - X: ${item.x}, Y: ${item.y}, Zeit: ${new Date(item.time).toLocaleTimeString()}`);
+            });
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'O' && event.shiftKey) {
+                displayMapHistory();
+            }
+        });
+
         canvas.addEventListener('click', startGame);
     </script>
 </body>
