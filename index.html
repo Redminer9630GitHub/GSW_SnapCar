@@ -208,8 +208,8 @@
             updateCoins();
             updateTrees();
 
-            if (Math.random() < 0.01) createCoin();  
-            if (Math.random() < 0.01) createTree();  
+            if (Math.random() < 0.015) createCoin();  
+            if (Math.random() < 0.02) createTree();  
 
             requestAnimationFrame(updateGame);
         }
@@ -306,9 +306,9 @@
                 ctx.drawImage(treeImage, tree.x, tree.y, tree.width, tree.height);
 
                 // Hitbox anpassen (Breite und Höhe in zwei Parametern)
-                const hitboxWidth = tree.width * 0.65; // Breite
+                const hitboxWidth = tree.width * 0.55; // Breite
                 const hitboxTopHeight = tree.height * 0.1; // Höhe oben
-                const hitboxBottomHeight = tree.height * 0.5; // Höhe unten
+                const hitboxBottomHeight = tree.height * 0.4; // Höhe unten
 
                 const hitboxX = tree.x + (tree.width - hitboxWidth) / 2;
                 const hitboxY = tree.y + (tree.height - (hitboxTopHeight + hitboxBottomHeight)) / 2;
@@ -322,8 +322,6 @@
                 }
             });
         }
-
-
 
         function startTimer() {
             if (timer) clearInterval(timer);
@@ -357,12 +355,6 @@
             gameOverDisplay.style.display = 'block';
             console.log('Player won/lose the Game');
 
-            // Farbwechsel wenn der Spieler 0 Punkte hat
-            if (score === 0) {
-                document.body.style.color = 'blue';  // Hintergrundfarbe auf blau setzen
-                gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
-            }
-
             // Farbwechsel wenn der Spieler gewonnen hat
             if (score >= pointsNeeded) {
                 document.body.style.color = 'lightgreen';  // Farbe für Gewinn
@@ -371,7 +363,12 @@
             else if (score >= 10 && score <= (pointsNeeded - 10)) {
                 document.body.style.color = 'red';  // Farbe für Game Over
             }
-
+            // Farbwechsel wenn der Spieler 0 Punkte hat
+            else if (score === 0) {
+                document.body.style.color = 'blue';  // Hintergrundfarbe auf blau setzen
+                gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
+            }
+            
             if (score > highscore) {
                 highscore = score;
                 localStorage.setItem('highscore', highscore);
