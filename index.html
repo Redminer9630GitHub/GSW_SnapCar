@@ -129,7 +129,7 @@
         <img src="blue_screen.png" alt="Pause">
     </div>
     <!-- Debug UI (unsichtbar zu Beginn) -->
-    <div id="debugUI" style="display: none; position: absolute; top: 10%; left: 10%; background-color: white; border: 1px solid #333; padding: 20px; z-index: 1000;">
+    <div id="debugUI" style="display: none; position: absolute; top: 10%; left: 10%; background-color: white; border: 1px solid #333; padding: 20px; z-index: 100;">
         <h3>Debug</h3>
         <p><strong>Auto Daten:</strong></p>
         <table id="carData">
@@ -137,12 +137,9 @@
             <tr><td>X-Position</td><td id="carX">-</td></tr>
             <tr><td>Y-Position</td><td id="carY">-</td></tr>
             <tr><td>Spur</td><td id="carLane">-</td></tr>
-            <tr><td>Geschwindigkeit</td><td id="carSpeed">-</td></tr>
         </table>
         <p><strong>Level Daten (Coins & Bäume):</strong></p>
         <table id="levelData">
-            <tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>
-            <!-- Hier werden die Coins und Bäume eingetragen -->
         </table>
     </div>
     <script>
