@@ -117,7 +117,7 @@
     <div id="controlsInfo">
         A oder ← um nach links zu fahren.<br>
         D oder → um nach rechts zu fahren.<br>
-        Erreiche 120 Punkte um einen Preis zu gewinnen.<br>
+        Erreiche ${pointsNeeded} Punkte um einen Preis zu gewinnen.<br>
     </div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="infoWrapper">
@@ -150,7 +150,7 @@
         let lastLaneChange = 0; 
         let mapHistory = [];
 
-        let pointsNeeded = 150
+        let pointsNeeded = 120
 
         highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
@@ -351,14 +351,25 @@
 
         function endGame() {
             gameOver = true;
-            gameOverDisplay.innerText = score >= pointsNeeded ? `Du hast einen Preis gewonnen! Dein Score: ${score}` : `Game Over! Dein Score: ${score}`;
+            gameOverDisplay.innerText = score >= pointsNeeded             
+                ? `Du hast einen Preis gewonnen! Dein Score: ${score}` 
+                : `Game Over! Dein Score: ${score}`;
             gameOverDisplay.style.display = 'block';
-            console.log('Player won/lose the Game')
-            
+            console.log('Player won/lose the Game');
+
+            // Farbwechsel wenn der Spieler 0 Punkte hat
+            if (score === 0) {
+                document.body.style.backgroundColor = 'blue';  // Hintergrundfarbe auf blau setzen
+                gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
+            }
+
+            // Farbwechsel wenn der Spieler gewonnen hat
             if (score >= pointsNeeded) {
-                document.body.style.Color = 'lightgreen';  // Farbe für Gewinn
-            } else {
-                document.body.style.Color = 'red';  // Farbe für Game Over
+                document.body.style.backgroundColor = 'lightgreen';  // Farbe für Gewinn
+            } 
+            // Farbwechsel für Scores zwischen 10 und Punktebedarf minus 10
+            else if (score >= 10 && score <= (pointsNeeded - 10)) {
+                document.body.style.backgroundColor = 'red';  // Farbe für Game Over
             }
 
             if (score > highscore) {
