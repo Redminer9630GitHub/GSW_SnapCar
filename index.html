@@ -196,6 +196,7 @@
 
         function startGame() {
             console.log('Attempted to start Game')
+            resetDebugUI()
             if (gameStarted) { return; }
             gameStarted = true;
             timeLeft = 60;
@@ -363,6 +364,7 @@
 
         function endGame() {
             gameOver = true;
+            resetDebugUI()
             gameOverDisplay.innerText = score >= pointsNeeded             
                 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` 
                 : `Game Over! Dein Score: ${score}`;
@@ -457,6 +459,31 @@ function toggleDebugUI() {
         debugUI.style.display = 'none';
     }
 }
+
+function resetDebugUI() {
+    // Leere das Debug-UI Level-Data-Table
+    levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>';
+
+    // Coins und Bäume Arrays leeren (wenn du auch die Spielobjekte resetten möchtest)
+    coins = [];
+    trees = [];
+
+    // Update die Anzeige der Auto-Daten ebenfalls, falls nötig
+    carX.innerText = '-';
+    carY.innerText = '-';
+    carLane.innerText = '-';
+    carSpeed.innerText = '-';
+
+    console.log("Debug UI und Level-Daten wurden zurückgesetzt.");
+}
+
+// Beispiel für einen Button-Click oder Shortcut
+document.addEventListener('keydown', (event) => {
+    if (event.shiftKey && event.key === 'R') { // Beispiel: Shift + R um Debug UI zu resetten
+        resetDebugUI();
+    }
+});
+
         
         // Tastenkombination für Shift + H
         document.addEventListener('keydown', (event) => {
