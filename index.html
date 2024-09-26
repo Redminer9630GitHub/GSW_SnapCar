@@ -424,12 +424,12 @@
         }
 
         // Referenzen zu den Debug-Elementen
-const debugUI = document.getElementById('debugUI');
-const carX = document.getElementById('carX');
-const carY = document.getElementById('carY');
-const carLane = document.getElementById('carLane');
-const carSpeed = document.getElementById('carSpeed');
-const levelDataTable = document.getElementById('levelData');
+        const debugUI = document.getElementById('debugUI');
+        const carX = document.getElementById('carX');
+        const carY = document.getElementById('carY');
+        const carLane = document.getElementById('carLane');
+        const carSpeed = document.getElementById('carSpeed');
+        const levelDataTable = document.getElementById('levelData');
 
 // Funktion um das Debug UI zu zeigen/verstecken
 function toggleDebugUI() {
@@ -461,17 +461,13 @@ function resetDebugUI() {
     // Leere das Debug-UI Level-Data-Table
     levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>';
 
-    // Coins und Bäume Arrays leeren (wenn du auch die Spielobjekte resetten möchtest)
     coins = [];
     trees = [];
 
-    // Update die Anzeige der Auto-Daten ebenfalls, falls nötig
     carX.innerText = '-';
     carY.innerText = '-';
     carLane.innerText = '-';
     carSpeed.innerText = '-';
-
-    console.log("Debug UI und Level-Daten wurden zurückgesetzt.");
 }
 
 // Beispiel für einen Button-Click oder Shortcut
@@ -480,37 +476,36 @@ document.addEventListener('keydown', (event) => {
         resetDebugUI();
     }
 });
-
         
         // Tastenkombination für Shift + H
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'H' && event.shiftKey) {
-                if (gamePaused) {
-                    resumeGame();
-                } else {
-                    pauseGame();
-                }
-            }
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' && !gameStarted) {
-                startGame();
-            }
-            if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
-                handleLaneChange('left');
-            }
-            if (event.code === 'ArrowRight' || event.code === 'KeyD') {
-                handleLaneChange('right');
-            } 
-        });
-
-        function displayMapHistory() {
-            console.log('Verlauf der Map:');
-            mapHistory.forEach(item => {
-                alert(`${item.type === 'coin' ? 'Coin' : 'Baum'} - X: ${item.x}, Y: ${item.y}, Zeit: ${new Date(item.time).toLocaleTimeString()}`);
-            });
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'H' && event.shiftKey) {
+        if (gamePaused) {
+            resumeGame();
+        } else {
+            pauseGame();
         }
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.code === 'Space' && !gameStarted) {
+        startGame();
+    }
+    if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
+        handleLaneChange('left');
+    }
+    if (event.code === 'ArrowRight' || event.code === 'KeyD') {
+        handleLaneChange('right');
+    } 
+});
+
+function displayMapHistory() {
+    console.log('Verlauf der Map:');
+    mapHistory.forEach(item => {
+        alert(`${item.type === 'coin' ? 'Coin' : 'Baum'} - X: ${item.x}, Y: ${item.y}, Zeit: ${new Date(item.time).toLocaleTimeString()}`);
+    });
+}
 
 // Event-Listener für Shift + O
 document.addEventListener('keydown', (event) => {
