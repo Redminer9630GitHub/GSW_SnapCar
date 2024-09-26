@@ -128,6 +128,23 @@
     <div id="pauseScreen">
         <img src="blue_screen.png" alt="Pause">
     </div>
+    <!-- Debug UI (unsichtbar zu Beginn) -->
+    <div id="debugUI" style="display: none; position: absolute; top: 10%; left: 10%; background-color: white; border: 1px solid #333; padding: 20px; z-index: 1000;">
+        <h3>Debug</h3>
+        <p><strong>Auto Daten:</strong></p>
+        <table id="carData">
+            <tr><th>Attribut</th><th>Wert</th></tr>
+            <tr><td>X-Position</td><td id="carX">-</td></tr>
+            <tr><td>Y-Position</td><td id="carY">-</td></tr>
+            <tr><td>Spur</td><td id="carLane">-</td></tr>
+            <tr><td>Geschwindigkeit</td><td id="carSpeed">-</td></tr>
+        </table>
+        <p><strong>Level Daten (Coins & Bäume):</strong></p>
+        <table id="levelData">
+            <tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>
+            <!-- Hier werden die Coins und Bäume eingetragen -->
+        </table>
+    </div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -406,6 +423,40 @@
             }
             lastLaneChange = Date.now();
         }
+
+        // Referenzen zu den Debug-Elementen
+const debugUI = document.getElementById('debugUI');
+const carX = document.getElementById('carX');
+const carY = document.getElementById('carY');
+const carLane = document.getElementById('carLane');
+const carSpeed = document.getElementById('carSpeed');
+const levelDataTable = document.getElementById('levelData');
+
+// Funktion um das Debug UI zu zeigen/verstecken
+function toggleDebugUI() {
+    if (debugUI.style.display === 'none') {
+        // Update der Auto-Daten
+        carX.innerText = car.x;
+        carY.innerText = car.y;
+        carLane.innerText = car.lane;
+        carSpeed.innerText = car.speed;
+
+        // Level-Daten (Coins & Bäume) kombinieren und anzeigen
+        const combinedData = [...coins, ...trees];
+        levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>'; // Tabellenkopf zurücksetzen
+        combinedData.forEach(item => {
+            let type = coins.includes(item) ? 'Coin' : 'Baum';
+            let row = `<tr><td>${type}</td><td>${item.x}</td><td>${item.y}</td></tr>`;
+            levelDataTable.innerHTML += row;
+        });
+
+        // Debug UI anzeigen
+        debugUI.style.display = 'block';
+    } else {
+        // Debug UI verstecken
+        debugUI.style.display = 'none';
+    }
+}
         
         // Tastenkombination für Shift + H
         document.addEventListener('keydown', (event) => {
@@ -437,11 +488,12 @@
             });
         }
 
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'O' && event.shiftKey) {
-                displayMapHistory();
-            }
-        });
+// Event-Listener für Shift + O
+document.addEventListener('keydown', (event) => {
+    if (event.shiftKey && event.key === 'O') {
+        toggleDebugUI();
+    }
+});
 
         canvas.addEventListener('click', startGame);
     </script>
