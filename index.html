@@ -319,54 +319,31 @@
             });
         }
 
-        function startTimer() {
-            if (timer) clearInterval(timer);
-            timer = setInterval(() => {
-                if (gameOver || timeLeft <= 0) {
-                    clearInterval(timer);
-                    endGame();
-                } else {
-                    timeLeft--;
-                    timerDisplay.innerText = `Zeit: ${timeLeft}`;
-                    updateTimerColor();
-                }
-            }, 1000);
-        }
-
-        function updateTimerColor() {
-            if (timeLeft > 30) {
-                timerDisplay.style.color = 'green';
-            } else if (timeLeft > 0) {
-                timerDisplay.style.color = 'orange';
-            } else {
-                timerDisplay.style.color = 'red';
-            }
-        }
-
         function endGame() {
             gameOver = true;
-            resetDebugUI()
             gameOverDisplay.innerText = score >= pointsNeeded             
                 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` 
                 : `Game Over! Dein Score: ${score}`;
-            gameOverDisplay.style.display = 'block';
-            console.log('Player won/lose the Game');
-            
+    
+            gameOverDisplay.style.display = 'block'; // Stelle sicher, dass es sichtbar ist
+            alert('Player won/lose the Game');
+    
             if (score === 0) {
                 gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
             }
-            
+    
             if (score > highscore) {
                 highscore = score;
                 localStorage.setItem('highscore', highscore);
-                console.log('Saved Highscore in localStorage')
+                console.log('Saved Highscore in localStorage');
                 highscoreDisplay.innerText = `Highscore: ${highscore}`;
-            }
+            }    
 
             setTimeout(() => {
                 gameStarted = false;
             }, 3000);
         }
+
 
         // Pause-Funktion mit Passwort
         function pauseGame() {
