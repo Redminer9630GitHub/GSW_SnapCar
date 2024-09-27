@@ -428,6 +428,21 @@
                 }
             }
         });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'O' && event.shiftKey) {
+                    let password = prompt('Bitte gib das Passwort ein, um das den Highscore zu Reseten:');
+                    if (password === '17uhr_TJW') {
+                        highscore = 0;
+                        localStorage.setItem('highscore', highscore);
+                        console.log('Deleted Highscore in localStorage');
+                        highscoreDisplay.innerText = `Highscore: ${highscore}`;
+                    } else {
+                        alert('Zugriff verweigert');
+                        console.log('Zugriff verweigert');
+                    }
+            }
+        });
     
         // Event-Listener für Tasteneingaben
         document.addEventListener('keydown', (event) => {
