@@ -134,14 +134,13 @@
         <p><strong>Auto Daten:</strong></p>
         <table id="carData">
             <tr><th>Attribut</th><th>Wert</th></tr>
-            <tr><td>X-Position</td><td id="carX">-</td></tr>
-            <tr><td>Y-Position</td><td id="carY">-</td></tr>
+            <tr><td>X</td><td id="carX">-</td></tr><tr><td>Y</td><td id="carY">-</td></tr>
             <tr><td>Spur</td><td id="carLane">-</td></tr>
         </table>
         <p><strong>Level Daten:</strong></p>
         <table id="levelData">
         </table>
-    </div>
+    </div> -->
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -193,7 +192,7 @@
 
         function startGame() {
             console.log('Attempted to start Game')
-            resetDebugUI()
+            <!-- resetDebugUI() -->
             if (gameStarted) { return; }
             gameStarted = true;
             timeLeft = 60;
@@ -423,7 +422,7 @@
             lastLaneChange = Date.now();
         }
 
-        // Referenzen zu den Debug-Elementen
+        <!-- // Referenzen zu den Debug-Elementen
         const debugUI = document.getElementById('debugUI');
         const carX = document.getElementById('carX');
         const carY = document.getElementById('carY');
@@ -475,7 +474,7 @@
             if (event.shiftKey && event.key === 'R') { // Beispiel: Shift + R um Debug UI zu resetten
                 resetDebugUI();
             }
-        });
+        }); -->
         
         // Tastenkombination für Shift + H
         document.addEventListener('keydown', (event) => {
@@ -514,7 +513,7 @@
         // Event-Listener für Shift + O
         document.addEventListener('keydown', (event) => {
             if (event.shiftKey && event.key === 'O') {
-                toggleDebugUI();
+            <!--    toggleDebugUI(); -->
             }
         });
 
