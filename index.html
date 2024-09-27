@@ -446,14 +446,10 @@
     
         // Event-Listener für Tasteneingaben
         document.addEventListener('keydown', (event) => {
-            console.log(`Taste gedrückt: ${event.code}`); // Debugging-Ausgabe
-
             if (event.code === 'Space') {
                 event.preventDefault(); // Verhindert das Scrollen der Seite
             }
-
             if (event.code === 'Space' && !gameStarted) {
-                console.log('Leertaste erkannt. Starte das Spiel.');
                 startGame();
             }
             if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
@@ -463,8 +459,7 @@
                 handleLaneChange('right');
             }
         });
-
-        // Optional: Touch-Event für mobile Geräte
+        
         canvas.addEventListener('click', startGame);
     </script>
 </body>
