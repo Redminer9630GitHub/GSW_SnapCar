@@ -489,8 +489,12 @@
         });
 
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' && !gameStarted) {
-                startGame();
+            if (event.code === 'Space') {
+                event.preventDefault();  // Verhindert, dass die Seite scrollt, wenn die Leertaste gedrückt wird
+                alert('Leertaste gedrückt');  // Überprüfe, ob die Taste registriert wird
+                if (!gameStarted) {
+                    startGame();
+                }
             }
             if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
                 handleLaneChange('left');
