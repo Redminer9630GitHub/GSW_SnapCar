@@ -183,7 +183,6 @@
             if (gameStarted) {
                 return;
             }
-
             gameStarted = true;
             timeLeft = 60;
             score = 0;
@@ -213,6 +212,7 @@
             if (Math.random() < 0.009) createTree();  
 
             requestAnimationFrame(updateGame);
+            // console.log('Frame aktualisiert'); // Optional: Debugging-Ausgabe
         }
 
         function drawCar() {
@@ -349,14 +349,14 @@
         }
 
         function endGame() {
-            console.log('Spiel endet...');
             gameOver = true;
             gameStarted = false;
             gameOverDisplay.innerText = score >= pointsNeeded             
                 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` 
                 : `Game Over! Dein Score: ${score}`;
 
-            gameOverDisplay.style.display = 'block';
+            gameOverDisplay.style.display = 'block'; // Stelle sicher, dass es sichtbar ist
+            // alert('Player won/lose the Game'); // Temporär entfernt für Debugging
 
             if (score === 0) {
                 gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
@@ -435,13 +435,17 @@
                 }
             }
         });
-
+    
         // Event-Listener für Tasteneingaben
         document.addEventListener('keydown', (event) => {
+            console.log(`Taste gedrückt: ${event.code}`); // Debugging-Ausgabe
+
             if (event.code === 'Space') {
                 event.preventDefault(); // Verhindert das Scrollen der Seite
             }
+
             if (event.code === 'Space' && !gameStarted) {
+                console.log('Leertaste erkannt. Starte das Spiel.');
                 startGame();
             }
             if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
@@ -453,7 +457,6 @@
         });
 
         // Optional: Touch-Event für mobile Geräte
-        canvas.addEventListener('touchstart', startGame);
         canvas.addEventListener('click', startGame);
     </script>
 </body>
