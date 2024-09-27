@@ -192,6 +192,7 @@
             trees = [];
             car.lane = 1;
             requestAnimationFrame(updateGame);
+            canvas.focus();  // Setze den Fokus auf das Canvas-Element
             console.log('Started Game')
         }
 
@@ -404,7 +405,7 @@
             }
         });
         
-        document.addEventListener('keydown', (event) => {
+        document.addEventListener('keypress', (event) => {
             if (event.code === 'Space' && !gameStarted) {
                 startGame();
             }    
