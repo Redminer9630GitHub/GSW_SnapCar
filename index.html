@@ -115,7 +115,7 @@
         D oder → um nach rechts zu fahren.<br>
         Erreiche 120 Punkte um einen Preis zu gewinnen.<br>
     </div>
-    <canvas id="gameCanvas" width="800" height="400" tabindex="0"></canvas> <!-- tabindex hinzugefügt -->
+    <canvas id="gameCanvas" width="800" height="400"></canvas> <!-- tabindex hinzugefügt -->
     <div id="infoWrapper">
         <div id="score">Score: 0</div>
         <div class="divider"></div>
@@ -351,16 +351,11 @@
         function endGame() {
             gameOver = true;
             gameStarted = false;
-            gameOverDisplay.innerText = score >= pointsNeeded             
-                ? `Du hast einen Preis gewonnen! Dein Score: ${score}` 
+            gameOverDisplay.innerText = score > highscore            
+                ? `Du hast den Highscore geschlagen! Dein Score: ${score}` 
                 : `Game Over! Dein Score: ${score}`;
 
-            gameOverDisplay.style.display = 'block'; // Stelle sicher, dass es sichtbar ist
-            // alert('Player won/lose the Game'); // Temporär entfernt für Debugging
-
-            if (score === 0) {
-                gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
-            }
+            gameOverDisplay.style.display = 'block';
 
             if (score > highscore) {
                 highscore = score;
