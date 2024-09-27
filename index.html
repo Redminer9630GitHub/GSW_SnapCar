@@ -128,23 +128,6 @@
     <div id="pauseScreen">
         <img src="blue_screen.png" alt="Pause">
     </div>
-    <!-- Debug UI (unsichtbar zu Beginn) -->
-    <div id="debugUI" style="display: none; position: absolute; top: 10%; left: 10%; background-color: white; border: 1px solid #333; padding: 20px; z-index: 1000;">
-        <h3>Debug</h3>
-        <p><strong>Auto Daten:</strong></p>
-        <table id="carData">
-            <tr><th>Attribut</th><th>Wert</th></tr>
-            <tr><td>X-Position</td><td id="carX">-</td></tr>
-            <tr><td>Y-Position</td><td id="carY">-</td></tr>
-            <tr><td>Spur</td><td id="carLane">-</td></tr>
-            <tr><td>Geschwindigkeit</td><td id="carSpeed">-</td></tr>
-        </table>
-        <p><strong>Level Daten:</strong></p>
-        <table id="levelData">
-            <tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>
-            <!-- Hier werden die Coins und Bäume eingetragen -->
-        </table>
-    </div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -197,11 +180,7 @@
         let trees = [];
 
         function startGame() {
-            console.log('Versuche, das Spiel zu starten...');
-            console.log('Aktueller Spielstatus:', gameStarted);
-
             if (gameStarted) {
-                console.log('Das Spiel ist bereits gestartet.');
                 return;
             }
 
@@ -219,7 +198,6 @@
             car.lane = 1;
             requestAnimationFrame(updateGame);
             canvas.focus();  // Setze den Fokus auf das Canvas-Element
-            console.log('Spiel wurde gestartet und Canvas fokussiert.');
         }
 
         function updateGame() {
@@ -235,7 +213,6 @@
             if (Math.random() < 0.009) createTree();  
 
             requestAnimationFrame(updateGame);
-            // console.log('Frame aktualisiert'); // Optional: Debugging-Ausgabe
         }
 
         function drawCar() {
@@ -379,8 +356,7 @@
                 ? `Du hast einen Preis gewonnen! Dein Score: ${score}` 
                 : `Game Over! Dein Score: ${score}`;
 
-            gameOverDisplay.style.display = 'block'; // Stelle sicher, dass es sichtbar ist
-            // alert('Player won/lose the Game'); // Temporär entfernt für Debugging
+            gameOverDisplay.style.display = 'block';
 
             if (score === 0) {
                 gameOverDisplay.innerText = `Du darfst eine zweite Runde fahren!`;
@@ -438,53 +414,6 @@
             lastLaneChange = Date.now();
         }
 
-        // Referenzen zu den Debug-Elementen
-        const debugUI = document.getElementById('debugUI');
-        const carX = document.getElementById('carX');
-        const carY = document.getElementById('carY');
-        const carLane = document.getElementById('carLane');
-        const carSpeed = document.getElementById('carSpeed');
-        const levelDataTable = document.getElementById('levelData');
-
-        // Funktion um das Debug UI zu zeigen/verstecken
-        function toggleDebugUI() {
-            if (debugUI.style.display === 'none') {
-                // Update der Auto-Daten
-                carX.innerText = car.x.toFixed(2);
-                carY.innerText = car.y.toFixed(2);
-                carLane.innerText = car.lane;
-                carSpeed.innerText = car.speed;
-
-                // Level-Daten (Coins & Bäume) kombinieren und anzeigen
-                const combinedData = [...coins, ...trees];
-                levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>'; // Tabellenkopf zurücksetzen
-                combinedData.forEach(item => {
-                    let type = coins.includes(item) ? 'Coin' : 'Baum';
-                    let row = `<tr><td>${type}</td><td>${item.x.toFixed(2)}</td><td>${item.y.toFixed(2)}</td></tr>`;
-                    levelDataTable.innerHTML += row;
-                });
-
-                // Debug UI anzeigen
-                debugUI.style.display = 'block';
-            } else {
-                // Debug UI verstecken
-                debugUI.style.display = 'none';
-            }
-        }
-
-        function resetDebugUI() {
-            // Leere das Debug-UI Level-Data-Table
-            levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>';
-
-            // Optional: Reset der Debug-Daten
-            // carX.innerText = '-';
-            // carY.innerText = '-';
-            // carLane.innerText = '-';
-            // carSpeed.innerText = '-';
-
-            console.log("Debug UI und Level-Daten wurden zurückgesetzt.");
-        }
-
         // Setze den Fokus auf das Canvas-Element, damit Tastaturereignisse erkannt werden
         window.onload = function() {
             canvas.focus();
@@ -506,24 +435,13 @@
                 }
             }
         });
-        
-        // Tastenkombination für Shift + O
-        document.addEventListener('keydown', (event) => {
-            if (event.shiftKey && event.key === 'O') {
-                toggleDebugUI();
-            }
-        });
 
         // Event-Listener für Tasteneingaben
         document.addEventListener('keydown', (event) => {
-            console.log(`Taste gedrückt: ${event.code}`); // Debugging-Ausgabe
-
             if (event.code === 'Space') {
                 event.preventDefault(); // Verhindert das Scrollen der Seite
             }
-
             if (event.code === 'Space' && !gameStarted) {
-                console.log('Leertaste erkannt. Starte das Spiel.');
                 startGame();
             }
             if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
@@ -536,6 +454,7 @@
 
         // Optional: Touch-Event für mobile Geräte
         canvas.addEventListener('touchstart', startGame);
+        canvas.addEventListener('click', startGame);
     </script>
 </body>
 </html>
