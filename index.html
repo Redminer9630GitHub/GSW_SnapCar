@@ -392,10 +392,7 @@
         function resumeGame() {
             let password = prompt('Bitte gib das Passwort ein, um das Spiel fortzufahren:');
             if (password === '17uhr_TJW') {
-                gamePaused = false;
-                pauseScreen.style.display = 'none';
-                console.log('Spiel fortgesetzt');
-                requestAnimationFrame(updateGame);
+                window.location.href = 'https://redminer9630github.github.io/GSW_SnapCar';
             } else {
                 alert('Zugriff verweigert');
                 console.log('Zugriff verweigert');
