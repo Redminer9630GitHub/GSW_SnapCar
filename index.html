@@ -102,9 +102,9 @@
         }
 
         @keyframes pulse {
-            0% { color: green; }
+            0% { color: white; }
             50% { color: black; }
-            100% { color: green; }
+            100% { color: white; }
         }
     </style>
 </head>
@@ -142,7 +142,7 @@
         let gameOver = false;
         let timeLeft = 60;
         let score = 0;
-        let highscore = localStorage.getItem('highscore') || 230;
+        let highscore = localStorage.getItem('highscore') || 290;
         let lastLaneChange = 0; 
         let mapHistory = [];
 
