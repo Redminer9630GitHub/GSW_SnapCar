@@ -128,19 +128,6 @@
     <div id="pauseScreen">
         <img src="blue_screen.png" alt="Pause">
     </div>
-    <!-- Debug UI (unsichtbar zu Beginn)
-    <div id="debugUI" style="display: none; position: absolute; top: 10%; left: 10%; background-color: white; border: 1px solid #333; padding: 20px; z-index: 1000;">
-        <h3>Debug</h3>
-        <p><strong>Auto Daten:</strong></p>
-        <table id="carData">
-            <tr><th>Attribut</th><th>Wert</th></tr>
-            <tr><td>X</td><td id="carX">-</td></tr><tr><td>Y</td><td id="carY">-</td></tr>
-            <tr><td>Spur</td><td id="carLane">-</td></tr>
-        </table>
-        <p><strong>Level Daten:</strong></p>
-        <table id="levelData">
-        </table>
-    </div> -->
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -191,8 +178,6 @@
         let trees = [];
 
         function startGame() {
-            console.log('Attempted to start Game')
-            <!-- resetDebugUI() -->
             if (gameStarted) { return; }
             gameStarted = true;
             timeLeft = 60;
@@ -422,53 +407,6 @@
             lastLaneChange = Date.now();
         }
 
-        <!-- // Referenzen zu den Debug-Elementen
-        const debugUI = document.getElementById('debugUI');
-        const carX = document.getElementById('carX');
-        const carY = document.getElementById('carY');
-        const carLane = document.getElementById('carLane');
-        const carSpeed = document.getElementById('carSpeed');
-        const levelDataTable = document.getElementById('levelData');
-
-        // Funktion um das Debug UI zu zeigen/verstecken
-        function toggleDebugUI() {
-            if (debugUI.style.display === 'none') {
-                // Update der Auto-Daten
-                carX.innerText = car.x;
-                carY.innerText = car.y;
-                carLane.innerText = car.lane;
-                carSpeed.innerText = car.speed;
-
-                // Level-Daten (Coins & Bäume) kombinieren und anzeigen
-                const combinedData = [...coins, ...trees];
-                levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>'; // Tabellenkopf zurücksetzen
-                combinedData.forEach(item => {
-                    let type = coins.includes(item) ? 'Coin' : 'Baum';
-                    let row = `<tr><td>${type}</td><td>${item.x}</td><td>${item.y}</td></tr>`;
-                    levelDataTable.innerHTML += row;
-                });
-
-                // Debug UI anzeigen
-                debugUI.style.display = 'block';
-            } else {
-                // Debug UI verstecken
-                debugUI.style.display = 'none';
-            }
-        }
-
-        function resetDebugUI() {
-            // Leere das Debug-UI Level-Data-Table
-            levelDataTable.innerHTML = '<tr><th>Typ</th><th>X-Position</th><th>Y-Position</th></tr>';
-
-            coins = [];
-            trees = [];
-
-            carX.innerText = ' ';
-            carY.innerText = ' ';
-            carLane.innerText = ' ';
-            carSpeed.innerText = ' ';
-        }
-
         // Setze den Fokus auf das Canvas-Element, damit Tastaturereignisse erkannt werden
         window.onload = function() {
             canvas.focus();
@@ -490,10 +428,7 @@
         });
         
         document.addEventListener('keydown', (event) => {
-            alert('Taste gedrückt:', event.code); // Füge dies ein, um zu sehen, welche Taste gedrückt wird
-
             if (event.code === 'Space' && !gameStarted) {
-                alert('Leertaste erkannt. Spiel wird gestartet.');
                 startGame();
             }    
             if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
@@ -511,13 +446,6 @@
                 alert(`${item.type === 'coin' ? 'Coin' : 'Baum'} - X: ${item.x}, Y: ${item.y}, Zeit: ${new Date(item.time).toLocaleTimeString()}`);
             });
         }
-
-        // Event-Listener für Shift + O
-        document.addEventListener('keydown', (event) => {
-            if (event.shiftKey && event.key === 'O') {
-            <!--    toggleDebugUI(); -->
-            }
-        });
 
         canvas.addEventListener('click', startGame);
     </script>
