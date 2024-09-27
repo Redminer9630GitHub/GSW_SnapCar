@@ -469,13 +469,15 @@
             carSpeed.innerText = ' ';
         }
 
-        // Beispiel für einen Button-Click oder Shortcut
-        document.addEventListener('keydown', (event) => {
-            if (event.shiftKey && event.key === 'R') { // Beispiel: Shift + R um Debug UI zu resetten
-                resetDebugUI();
-            }
-        }); -->
-        
+        // Setze den Fokus auf das Canvas-Element, damit Tastaturereignisse erkannt werden
+        window.onload = function() {
+            canvas.focus();
+        };
+
+        canvas.addEventListener('click', () => {
+            canvas.focus();
+        });
+      
         // Tastenkombination für Shift + H
         document.addEventListener('keydown', (event) => {
             if (event.key === 'H' && event.shiftKey) {
@@ -486,22 +488,22 @@
                 }
             }
         });
-
+        
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space') {
-                event.preventDefault();  // Verhindert, dass die Seite scrollt, wenn die Leertaste gedrückt wird
-                alert('Leertaste gedrückt');  // Überprüfe, ob die Taste registriert wird
-                if (!gameStarted) {
-                    startGame();
-                }
-            }
+            alert('Taste gedrückt:', event.code); // Füge dies ein, um zu sehen, welche Taste gedrückt wird
+
+            if (event.code === 'Space' && !gameStarted) {
+                alert('Leertaste erkannt. Spiel wird gestartet.');
+                startGame();
+            }    
             if (event.code === 'ArrowLeft' || event.code === 'KeyA') {
                 handleLaneChange('left');
             }
             if (event.code === 'ArrowRight' || event.code === 'KeyD') {
                 handleLaneChange('right');
-            } 
+            }
         });
+
 
         function displayMapHistory() {
             console.log('Verlauf der Map:');
